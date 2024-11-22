@@ -42,24 +42,44 @@ class _CaptainPageState extends State<CaptainPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              child: CupertinoButton(
-                  child: Text('${date.month}-${date.day}-${date.year}',
-                      style: const TextStyle(
-                        fontSize: 22.0,
-                      )),
-                  onPressed: () => _showDialog(
-                        CupertinoDatePicker(
-                          initialDateTime: date,
-                          mode: CupertinoDatePickerMode.date,
-                          use24hFormat: true,
-                          // This shows day of week alongside day of month
-                          showDayOfWeek: true,
-                          // This is called when the user changes the date.
-                          onDateTimeChanged: (DateTime newDate) {
-                            setState(() => date = newDate);
-                          },
-                        ),
-                      )),
+              child: Row(
+                children: [
+                  CupertinoButton(
+                    onPressed: () => setState(() {
+                      date = date.subtract(const Duration(days: 1));
+                    }),
+                    child: const SizedBox(
+                      child: Icon(CupertinoIcons.left_chevron),
+                    ),
+                  ),
+                  CupertinoButton(
+                      child: Text('${date.month}-${date.day}-${date.year}',
+                          style: const TextStyle(
+                            fontSize: 22.0,
+                          )),
+                      onPressed: () => _showDialog(
+                            CupertinoDatePicker(
+                              initialDateTime: date,
+                              mode: CupertinoDatePickerMode.date,
+                              use24hFormat: true,
+                              // This shows day of week alongside day of month
+                              showDayOfWeek: true,
+                              // This is called when the user changes the date.
+                              onDateTimeChanged: (DateTime newDate) {
+                                setState(() => date = newDate);
+                              },
+                            ),
+                          )),
+                  CupertinoButton(
+                    onPressed: () => setState(() {
+                      date = date.add(const Duration(days: 1));
+                    }),
+                    child: const SizedBox(
+                      child: Icon(CupertinoIcons.right_chevron),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

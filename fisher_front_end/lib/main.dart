@@ -1,5 +1,5 @@
-import 'package:fisher_front_end/views/captain_page.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:fisher_front_end/route/route.dart';
 
 void main() {
   runApp(const MainApp());
@@ -10,11 +10,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return const CupertinoApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: CaptainPage(),
+      theme: CupertinoThemeData(brightness: Brightness.light),
+      home: CupertinoPageScaffold(
+        child: Navigator(
+          initialRoute: 'captainPage',
+          onGenerateRoute: generateRoute,
         ),
       ),
     );
