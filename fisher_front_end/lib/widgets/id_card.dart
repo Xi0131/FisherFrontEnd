@@ -1,7 +1,15 @@
 import 'package:flutter/cupertino.dart';
 
 class IdCard extends StatefulWidget {
-  const IdCard({super.key});
+  final Image workerImage;
+  final String workerName;
+  final String workerType;
+  const IdCard({
+    super.key,
+    required this.workerImage,
+    required this.workerName,
+    required this.workerType,
+  });
 
   @override
   State<IdCard> createState() => _IdCardState();
@@ -9,6 +17,17 @@ class IdCard extends StatefulWidget {
 
 class _IdCardState extends State<IdCard> {
   bool _isHighlighted = false;
+  Image _workerHeadImage = Image.asset('default.png');
+  late String _workerName;
+  late String _workerType;
+
+  @override
+  void initState() {
+    _workerHeadImage = widget.workerImage;
+    _workerName = widget.workerName;
+    _workerType = widget.workerType;
+    super.initState();
+  }
 
   void _toggleHighlight() {
     setState(() {
@@ -18,20 +37,59 @@ class _IdCardState extends State<IdCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(
-          color: _isHighlighted
-              ? CupertinoColors.activeBlue // Highlight color
-              : CupertinoColors.systemGrey6, // Default border color
-          width: 2.0,
+    return Center(
+      child: Container(
+        height: 100,
+        width: 200,
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemGrey6,
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: _isHighlighted
+                ? CupertinoColors.activeBlue // Highlight color
+                : CupertinoColors.systemGrey4, // Default border color
+            width: 2.0,
+          ),
         ),
-      ),
-      child: CupertinoButton(
-        child: Text('click me'),
-        onPressed: _toggleHighlight,
+        child: CupertinoButton(
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+          onPressed: _toggleHighlight,
+          child: Row(
+            children: [
+              SizedBox(
+                height: 100,
+                width: 80,
+                child: _workerHeadImage,
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(
+                    width: 80,
+                    child: Text(
+                      _workerName,
+                      softWrap: false,
+                      style: const TextStyle(fontSize: 15),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 80,
+                    child: Text(
+                      _workerType,
+                      style: const TextStyle(fontSize: 10),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
