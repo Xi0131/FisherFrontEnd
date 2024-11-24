@@ -15,6 +15,7 @@ class MainApp extends StatelessWidget {
       theme: CupertinoThemeData(brightness: Brightness.light),
       home: CupertinoPageScaffold(
         child: Navigator(
+          // change initialRoute to test different page
           initialRoute: 'captainPage',
           onGenerateRoute: generateRoute,
         ),

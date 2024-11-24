@@ -1,5 +1,6 @@
 import 'package:fisher_front_end/widgets/date_picker.dart';
 import 'package:fisher_front_end/widgets/id_card.dart';
+import 'package:fisher_front_end/widgets/working_hour_picker.dart';
 import 'package:flutter/cupertino.dart';
 
 class CaptainPage extends StatefulWidget {
@@ -11,7 +12,10 @@ class CaptainPage extends StatefulWidget {
 
 class _CaptainPageState extends State<CaptainPage> {
   DateTime date = DateTime.now();
-  int workingTimeSelected = 0;
+  int workingTimeSelected12 =
+      0; // uses bitwise to save the first 12 hours working hour
+  int workingTimeSelected24 =
+      0; // uses bitwise to save the last 12 hours working hour
 
   // List of items
   final List<Map<String, dynamic>> items = [
@@ -119,11 +123,16 @@ class _CaptainPageState extends State<CaptainPage> {
     );
   }
 
-  void _toggleTime(int index) {
-    setState(() {
-      workingTimeSelected =
-          workingTimeSelected ^ (2 << index); // Toggle highlight state
-    });
+  void onUpdate12(int newWorkingTimeSelected12) {
+    setState(
+      () => workingTimeSelected12 = newWorkingTimeSelected12,
+    );
+  }
+
+  void onUpdate24(int newWorkingTimeSelected24) {
+    setState(
+      () => workingTimeSelected12 = newWorkingTimeSelected24,
+    );
   }
 
   void onSaveInfo() {}
@@ -133,7 +142,6 @@ class _CaptainPageState extends State<CaptainPage> {
     return Column(
       children: [
         DatePicker(date: date, onUpdateDate: onUpdateDate),
-
         // show workers
         SizedBox(
           height: 300,
@@ -161,43 +169,12 @@ class _CaptainPageState extends State<CaptainPage> {
         const SizedBox(
           height: 10,
         ),
-        Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              24,
-              (items) {
-                return SizedBox(
-                  height: 25,
-                  width: 25,
-                  child: CupertinoButton(
-                    color: CupertinoColors.activeBlue,
-                    child: const SizedBox(),
-                    onPressed: () {},
-                  ),
-                );
-              },
-            )),
-        const SizedBox(
-          height: 10,
+        WorkingHourPicker(
+          workingTimeSelected12: workingTimeSelected12,
+          workingTimeSelected24: workingTimeSelected24,
+          onUpdate12: onUpdate12,
+          onUpdate24: onUpdate24,
         ),
-        Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              24,
-              (index) {
-                return SizedBox(
-                  height: 25,
-                  width: 25,
-                  child: CupertinoButton(
-                    color: CupertinoColors.activeBlue,
-                    child: const SizedBox(),
-                    onPressed: () {},
-                  ),
-                );
-              },
-            )),
         const SizedBox(
           height: 10,
         ),
