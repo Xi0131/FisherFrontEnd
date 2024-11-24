@@ -1,3 +1,4 @@
+import 'package:fisher_front_end/widgets/ct_navigator_bar.dart';
 import 'package:fisher_front_end/widgets/date_picker.dart';
 import 'package:fisher_front_end/widgets/id_card.dart';
 import 'package:fisher_front_end/widgets/working_hour_picker.dart';
@@ -156,24 +157,7 @@ class _CaptainPageState extends State<CaptainPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-          leading: CupertinoButton(
-            padding: const EdgeInsets.all(0),
-            onPressed: () {
-              debugPrint('hi');
-            },
-            child: const SizedBox(child: Icon(CupertinoIcons.back)),
-          ),
-          middle: const Text('Worker Management'),
-          trailing: CupertinoButton(
-            padding: const EdgeInsets.all(0),
-            onPressed: () {
-              debugPrint('hi');
-            },
-            child: const SizedBox(
-              child: Icon(CupertinoIcons.settings),
-            ),
-          )),
+      navigationBar: CTNavigatorBar(context: context),
       child: SafeArea(
         child: Column(
           children: [
@@ -189,7 +173,7 @@ class _CaptainPageState extends State<CaptainPage> {
                     crossAxisCount: 4,
                     mainAxisSpacing: 5, // Space between rows
                     crossAxisSpacing: 5, // Space between columns
-                    childAspectRatio: 1.5, // Width / Height ratio
+                    childAspectRatio: 2, // Width / Height ratio
                   ),
                   itemCount: items.length,
                   itemBuilder: (context, index) {
