@@ -52,14 +52,14 @@ class _WorkingHourPickerState extends State<WorkingHourPicker> {
             children: List.generate(
               12,
               (index) {
-                return const Row(
+                return Row(
                   children: [
                     SizedBox(
                       height: 25,
                       width: 25,
-                      child: Text('1'),
+                      child: Text('$index'),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 25,
                       width: 25,
                     ),
@@ -67,7 +67,6 @@ class _WorkingHourPickerState extends State<WorkingHourPicker> {
                 );
               },
             )),
-        const SizedBox(height: 10),
         Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -97,6 +96,27 @@ class _WorkingHourPickerState extends State<WorkingHourPicker> {
               },
             )),
         const SizedBox(height: 10),
+        Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              12,
+              (index) {
+                return Row(
+                  children: [
+                    SizedBox(
+                      height: 25,
+                      width: 25,
+                      child: Text('${index + 12}'),
+                    ),
+                    const SizedBox(
+                      height: 25,
+                      width: 25,
+                    ),
+                  ],
+                );
+              },
+            )),
         Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
