@@ -13,12 +13,10 @@ class MainApp extends StatelessWidget {
     return const CupertinoApp(
       debugShowCheckedModeBanner: false,
       theme: CupertinoThemeData(brightness: Brightness.light),
-      home: CupertinoPageScaffold(
-        child: Navigator(
-          // change initialRoute to test different page
-          initialRoute: 'captainPage',
-          onGenerateRoute: generateRoute,
-        ),
+      home: Navigator(
+        // change initialRoute to test different page
+        initialRoute: 'captainPage',
+        onGenerateRoute: generateRoute,
       ),
     );
   }

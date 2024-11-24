@@ -23,97 +23,113 @@ class _CaptainPageState extends State<CaptainPage> {
       "workerName": "Name 1",
       "workerType": "Type 1",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 2",
       "workerType": "Type 2",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 3",
       "workerType": "Type 3",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 4",
       "workerType": "Type 4",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 5",
       "workerType": "Type 5",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 6",
       "workerType": "Type 6",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 7",
       "workerType": "Type 7",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 8",
       "workerType": "Type 8",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 1",
       "workerType": "Type 1",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 2",
       "workerType": "Type 2",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 3",
       "workerType": "Type 3",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 4",
       "workerType": "Type 4",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 5",
       "workerType": "Type 5",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 6",
       "workerType": "Type 6",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 7",
       "workerType": "Type 7",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
     {
       "workerName": "Name 8",
       "workerType": "Type 8",
       "workingTime": 0,
-      "isSelected": false
+      "isSelected": false,
+      "isRecorded": false
     },
   ];
 
@@ -139,60 +155,83 @@ class _CaptainPageState extends State<CaptainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        DatePicker(date: date, onUpdateDate: onUpdateDate),
-        // show workers
-        SizedBox(
-          height: 300,
-          width: 800,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                mainAxisSpacing: 5, // Space between rows
-                crossAxisSpacing: 5, // Space between columns
-                childAspectRatio: 1.5, // Width / Height ratio
-              ),
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return IdCard(
-                  workerImage: Image.asset('default.png'),
-                  workerName: items[index]['workerName'],
-                  workerType: items[index]['workerType'],
-                );
-              },
-            ),
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+          leading: CupertinoButton(
+            padding: const EdgeInsets.all(0),
+            onPressed: () {
+              debugPrint('hi');
+            },
+            child: const SizedBox(child: Icon(CupertinoIcons.back)),
           ),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        WorkingHourPicker(
-          workingTimeSelected12: workingTimeSelected12,
-          workingTimeSelected24: workingTimeSelected24,
-          onUpdate12: onUpdate12,
-          onUpdate24: onUpdate24,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        // The row widget here is to leave space for addition button
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          middle: const Text('Worker Management'),
+          trailing: CupertinoButton(
+            padding: const EdgeInsets.all(0),
+            onPressed: () {
+              debugPrint('hi');
+            },
+            child: const SizedBox(
+              child: Icon(CupertinoIcons.settings),
+            ),
+          )),
+      child: SafeArea(
+        child: Column(
           children: [
-            CupertinoButton(
-              color: CupertinoColors.systemGrey6,
-              onPressed: onSaveInfo,
-              child: const Text(
-                'Save data',
-                style: TextStyle(color: CupertinoColors.activeBlue),
+            DatePicker(date: date, onUpdateDate: onUpdateDate),
+            // show workers
+            SizedBox(
+              height: 300,
+              width: 800,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 5, // Space between rows
+                    crossAxisSpacing: 5, // Space between columns
+                    childAspectRatio: 1.5, // Width / Height ratio
+                  ),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return IdCard(
+                      workerImage: Image.asset('default.png'),
+                      workerName: items[index]['workerName'],
+                      workerType: items[index]['workerType'],
+                      isRecorded: items[index]['isRecorded'],
+                    );
+                  },
+                ),
               ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            WorkingHourPicker(
+              workingTimeSelected12: workingTimeSelected12,
+              workingTimeSelected24: workingTimeSelected24,
+              onUpdate12: onUpdate12,
+              onUpdate24: onUpdate24,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            // The row widget here is to leave space for addition button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CupertinoButton(
+                  color: CupertinoColors.systemGrey6,
+                  onPressed: onSaveInfo,
+                  child: const Text(
+                    'Save data',
+                    style: TextStyle(color: CupertinoColors.activeBlue),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 }

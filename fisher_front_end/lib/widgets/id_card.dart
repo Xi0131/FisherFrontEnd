@@ -4,12 +4,13 @@ class IdCard extends StatefulWidget {
   final Image workerImage;
   final String workerName;
   final String workerType;
-  const IdCard({
-    super.key,
-    required this.workerImage,
-    required this.workerName,
-    required this.workerType,
-  });
+  final bool isRecorded;
+  const IdCard(
+      {super.key,
+      required this.workerImage,
+      required this.workerName,
+      required this.workerType,
+      required this.isRecorded});
 
   @override
   State<IdCard> createState() => _IdCardState();
@@ -20,12 +21,14 @@ class _IdCardState extends State<IdCard> {
   Image _workerHeadImage = Image.asset('default.png');
   late String _workerName;
   late String _workerType;
+  late bool _isRecorded;
 
   @override
   void initState() {
     _workerHeadImage = widget.workerImage;
     _workerName = widget.workerName;
     _workerType = widget.workerType;
+    _isRecorded = widget.isRecorded;
     super.initState();
   }
 
