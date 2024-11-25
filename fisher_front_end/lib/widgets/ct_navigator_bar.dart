@@ -61,12 +61,13 @@ class _CTNavigatorBarState extends State<CTNavigatorBar> {
           onPressed: () => _showDialog(context),
           child: const SizedBox(child: Icon(CupertinoIcons.back)),
         ),
-        middle: const Text('Worker Management'),
+        middle: const Text('Wokring Hour Management'),
         trailing: Stack(
           children: [
             CupertinoButton(
               padding: const EdgeInsets.all(0),
               onPressed: () {
+                Navigator.pushNamed(context, 'ctNavList');
                 _toggleNotification();
               },
               child: const SizedBox(
