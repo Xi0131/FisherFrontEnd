@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CrewDatePicker extends StatelessWidget {
-  const CrewDatePicker({Key? key}) : super(key: key);
+  const CrewDatePicker({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,9 +10,9 @@ class CrewDatePicker extends StatelessWidget {
         // 月份標題
         Container(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Icon(Icons.arrow_left), // 向左切換月份
               Text(
                 'July 2024',

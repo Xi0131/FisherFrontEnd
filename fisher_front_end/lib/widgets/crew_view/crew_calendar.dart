@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class CrewCalendar extends StatefulWidget {
-  const CrewCalendar({Key? key}) : super(key: key);
+  const CrewCalendar({super.key});
 
   @override
-  _CrewCalendarState createState() => _CrewCalendarState();
+  CrewCalendarState createState() => CrewCalendarState();
 }
 
-class _CrewCalendarState extends State<CrewCalendar> {
+class CrewCalendarState extends State<CrewCalendar> {
   int selectedYear = DateTime.now().year;
   int selectedMonth = DateTime.now().month;
 
@@ -17,7 +17,8 @@ class _CrewCalendarState extends State<CrewCalendar> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double gridPadding = 16.0;
     final double cellSpacing = 8.0;
-    final double cellSize = (screenWidth - gridPadding * 2 - cellSpacing * 6) / 7;
+    final double cellSize =
+        (screenWidth - gridPadding * 2 - cellSpacing * 6) / 7;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -115,8 +116,9 @@ class _CrewCalendarState extends State<CrewCalendar> {
                   itemCount: _getGridItemCount(selectedYear, selectedMonth),
                   itemBuilder: (context, index) {
                     final daysInMonth =
-                    DateUtils.getDaysInMonth(selectedYear, selectedMonth);
-                    final firstWeekday = _getFirstWeekdayOfMonth(selectedYear, selectedMonth);
+                        DateUtils.getDaysInMonth(selectedYear, selectedMonth);
+                    final firstWeekday =
+                        _getFirstWeekdayOfMonth(selectedYear, selectedMonth);
 
                     if (index < firstWeekday - 1) {
                       return const SizedBox(); // 空白方格
@@ -209,7 +211,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                         },
                         children: List.generate(
                           50,
-                              (index) => Center(
+                          (index) => Center(
                             child: Text(
                               '${DateTime.now().year - 25 + index}',
                               style: const TextStyle(fontSize: 20),
@@ -230,7 +232,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                         },
                         children: List.generate(
                           12,
-                              (index) => Center(
+                          (index) => Center(
                             child: Text(
                               _getMonthName(index + 1),
                               style: const TextStyle(fontSize: 20),

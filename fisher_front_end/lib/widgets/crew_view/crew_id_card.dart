@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CrewIdCard extends StatelessWidget {
-  const CrewIdCard({Key? key}) : super(key: key);
+  const CrewIdCard({super.key});
 
   @override
   Widget build(BuildContext context) {
