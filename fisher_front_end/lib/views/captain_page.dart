@@ -14,12 +14,12 @@ class CaptainPage extends StatefulWidget {
 class _CaptainPageState extends State<CaptainPage> {
   DateTime date = DateTime.now();
   int workingTimeSelected12 =
-      0; // uses bitwise to save the first 12 hours working hour
+      0; // uses bitmask to save the first 12 hours working hour
   int workingTimeSelected24 =
-      0; // uses bitwise to save the last 12 hours working hour
+      0; // uses bitmask to save the last 12 hours working hour
 
   // List of items
-  final List<Map<String, dynamic>> items = [
+  final List<Map<String, dynamic>> workerList = [
     {
       "workerName": "Name 1",
       "workerType": "Type 1",
@@ -140,6 +140,12 @@ class _CaptainPageState extends State<CaptainPage> {
     );
   }
 
+  void onWorkderSelect(int index, bool isSelected) {
+    setState(() {
+      workerList[index]['isRecorded'] = !workerList[index]['isRecorded'];
+    });
+  }
+
   void onUpdate12(int newWorkingTimeSelected12) {
     setState(
       () => workingTimeSelected12 = newWorkingTimeSelected12,
@@ -175,13 +181,13 @@ class _CaptainPageState extends State<CaptainPage> {
                     crossAxisSpacing: 5, // Space between columns
                     childAspectRatio: 2, // Width / Height ratio
                   ),
-                  itemCount: items.length,
+                  itemCount: workerList.length,
                   itemBuilder: (context, index) {
                     return IdCard(
                       workerImage: Image.asset('default.png'),
-                      workerName: items[index]['workerName'],
-                      workerType: items[index]['workerType'],
-                      isRecorded: items[index]['isRecorded'],
+                      workerName: workerList[index]['workerName'],
+                      workerType: workerList[index]['workerType'],
+                      isRecorded: workerList[index]['isRecorded'],
                     );
                   },
                 ),

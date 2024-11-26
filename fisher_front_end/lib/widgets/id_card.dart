@@ -44,6 +44,12 @@ class _IdCardState extends State<IdCard> {
       child: Container(
         height: 100,
         width: 200,
+        foregroundDecoration: _isRecorded
+            ? const BoxDecoration(
+                color: CupertinoColors.systemGrey,
+                backgroundBlendMode: BlendMode.saturation,
+              )
+            : null,
         decoration: BoxDecoration(
           color: CupertinoColors.systemGrey6,
           borderRadius: BorderRadius.circular(8.0),

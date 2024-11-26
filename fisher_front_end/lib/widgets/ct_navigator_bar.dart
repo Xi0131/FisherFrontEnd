@@ -20,6 +20,7 @@ class CTNavigatorBar extends StatefulWidget
 class _CTNavigatorBarState extends State<CTNavigatorBar> {
   bool _hasNotification = false;
   // State to control the red dot visibility
+
   void _toggleNotification() {
     setState(() {
       _hasNotification = !_hasNotification; // Toggle notification state
@@ -53,6 +54,12 @@ class _CTNavigatorBarState extends State<CTNavigatorBar> {
     );
   }
 
+  void _getNotificationStatus() {
+    // call api to get notification status
+    // should be call when first login to working hour management page
+    // should be call after every save
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoNavigationBar(
@@ -68,7 +75,7 @@ class _CTNavigatorBarState extends State<CTNavigatorBar> {
               padding: const EdgeInsets.all(0),
               onPressed: () {
                 Navigator.pushNamed(context, 'ctNavList');
-                _toggleNotification();
+                // _toggleNotification();
               },
               child: const SizedBox(
                 child: Icon(CupertinoIcons.settings),
