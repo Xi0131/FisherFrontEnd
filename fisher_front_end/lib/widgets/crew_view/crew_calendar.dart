@@ -130,6 +130,7 @@ class CrewCalendarState extends State<CrewCalendar> {
                       return GestureDetector(
                         onTap: () {
                           // 點擊日期顯示詳情
+                          debugPrint("hihihi");
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(

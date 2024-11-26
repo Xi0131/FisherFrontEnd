@@ -1,7 +1,7 @@
-import 'package:fisher_front_end/widgets/ct_navigator_bar.dart';
-import 'package:fisher_front_end/widgets/date_picker.dart';
-import 'package:fisher_front_end/widgets/id_card.dart';
-import 'package:fisher_front_end/widgets/working_hour_picker.dart';
+import 'package:fisher_front_end/widgets/ct_view/date_picker.dart';
+import 'package:fisher_front_end/widgets/ct_view/id_card.dart';
+import 'package:fisher_front_end/widgets/ct_view/working_hour_picker.dart';
+import 'package:fisher_front_end/widgets/navigation_bar/ct_navigator_bar.dart';
 import 'package:flutter/cupertino.dart';
 
 class CaptainPage extends StatefulWidget {
