@@ -1,19 +1,37 @@
 import 'package:flutter/cupertino.dart';
-import 'edit.dart' ;//導入 EditPersonnelPage
+import 'edit.dart'; //導入 EditPersonnelPage
 import 'add_people.dart';
 
-class PeopleManagementPage extends StatefulWidget {
-  const PeopleManagementPage({super.key});
+class WorkerManagementPage extends StatefulWidget {
+  const WorkerManagementPage({super.key});
 
   @override
-  PeopleManagementPageState createState() => PeopleManagementPageState();
+  WorkerManagementPageState createState() => WorkerManagementPageState();
 }
 
-class PeopleManagementPageState extends State<PeopleManagementPage> {
+class WorkerManagementPageState extends State<WorkerManagementPage> {
   final List<Map<String, String>> personnel = [
-    {"name": "John", "number": "001", "role": "Fisherman", "birthday": "1990-01-01", "country": "USA"},
-    {"name": "Jane", "number": "002", "role": "Deckhands", "birthday": "1995-02-02", "country": "Canada"},
-    {"name": "Tom", "number": "003", "role": "FishProcessors", "birthday": "1988-03-03", "country": "UK"},
+    {
+      "name": "John",
+      "number": "001",
+      "role": "Fisherman",
+      "birthday": "1990-01-01",
+      "country": "USA"
+    },
+    {
+      "name": "Jane",
+      "number": "002",
+      "role": "Deckhands",
+      "birthday": "1995-02-02",
+      "country": "Canada"
+    },
+    {
+      "name": "Tom",
+      "number": "003",
+      "role": "FishProcessors",
+      "birthday": "1988-03-03",
+      "country": "UK"
+    },
   ];
 
   String selectedCategory = 'All';
@@ -31,8 +49,8 @@ class PeopleManagementPageState extends State<PeopleManagementPage> {
     List<Map<String, String>> filteredPersonnel = selectedCategory == 'All'
         ? personnel
         : personnel
-        .where((person) => person['role'] == selectedCategory)
-        .toList();
+            .where((person) => person['role'] == selectedCategory)
+            .toList();
 
     return CupertinoPageScaffold(
       child: Column(
@@ -46,9 +64,11 @@ class PeopleManagementPageState extends State<PeopleManagementPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: categories.map((category) {
                   bool isSelected = category == selectedCategory;
-                  return Expanded( // 使用 Expanded 讓按鈕等分螢幕寬度
+                  return Expanded(
+                    // 使用 Expanded 讓按鈕等分螢幕寬度
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10), // 控制按鈕間距
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 10), // 控制按鈕間距
                       child: CupertinoButton(
                         padding: EdgeInsets.zero,
                         onPressed: () {
@@ -64,7 +84,8 @@ class PeopleManagementPageState extends State<PeopleManagementPage> {
                                 : CupertinoColors.lightBackgroundGray,
                             borderRadius: BorderRadius.circular(100),
                           ),
-                          child: Center( // 讓文字置中
+                          child: Center(
+                            // 讓文字置中
                             child: Text(
                               category,
                               style: TextStyle(
@@ -83,7 +104,6 @@ class PeopleManagementPageState extends State<PeopleManagementPage> {
               ),
             ),
           ),
-
 
           // 卡片區域
           Expanded(
@@ -128,8 +148,9 @@ class PeopleManagementPageState extends State<PeopleManagementPage> {
                   });
                 }
 
-                final person = filteredPersonnel[index];// 人員卡片點擊
-                final originalIndex = personnel.indexWhere((p) => p['number'] == person['number']); // 確保正確匹配原始數據
+                final person = filteredPersonnel[index]; // 人員卡片點擊
+                final originalIndex = personnel.indexWhere(
+                    (p) => p['number'] == person['number']); // 確保正確匹配原始數據
                 return PersonnelCard(
                   name: person["name"]!,
                   number: person["number"]!,
@@ -138,7 +159,8 @@ class PeopleManagementPageState extends State<PeopleManagementPage> {
                       context,
                       CupertinoPageRoute(
                         builder: (context) => EditPersonnelPage(
-                          person: Map<String, String>.from(personnel[originalIndex]), // 使用原始數據
+                          person: Map<String, String>.from(
+                              personnel[originalIndex]), // 使用原始數據
                           onDelete: () {
                             setState(() {
                               personnel.removeAt(originalIndex); // 刪除原始數據
@@ -147,7 +169,8 @@ class PeopleManagementPageState extends State<PeopleManagementPage> {
                           },
                           onSave: (updatedPerson) {
                             setState(() {
-                              personnel[originalIndex] = updatedPerson; // 更新原始數據
+                              personnel[originalIndex] =
+                                  updatedPerson; // 更新原始數據
                             });
                           },
                         ),
@@ -191,15 +214,15 @@ class PersonnelCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 300,//長方形大小
-              height: 180,//圓形大小
+              width: 300, //長方形大小
+              height: 180, //圓形大小
               decoration: const BoxDecoration(
                 color: CupertinoColors.activeBlue,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 CupertinoIcons.person,
-                size:90,
+                size: 90,
                 color: CupertinoColors.white,
               ),
             ),
@@ -214,11 +237,10 @@ class PersonnelCard extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Text(
-
               "No. $number",
               style: const TextStyle(
-                  color: CupertinoColors.systemGrey,
-                  fontSize: 40,
+                color: CupertinoColors.systemGrey,
+                fontSize: 40,
               ),
             ),
           ],
@@ -247,7 +269,7 @@ class AddNewButton extends StatelessWidget {
         padding: const EdgeInsets.all(15),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children:  [
+          children: [
             Icon(
               CupertinoIcons.add_circled,
               size: 180,
