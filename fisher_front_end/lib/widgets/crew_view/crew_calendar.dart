@@ -87,9 +87,9 @@ class CrewCalendarState extends State<CrewCalendar> {
             ),
             const SizedBox(height: 10),
             // 星期標頭
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const [
+              children: [
                 Text('Mon'),
                 Text('Tue'),
                 Text('Wed'),
