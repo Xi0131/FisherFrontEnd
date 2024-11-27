@@ -19,7 +19,7 @@ class _CaptainPageState extends State<CaptainPage> {
       0; // uses bitmask to save the last 12 hours working hour
 
   // List of items
-  final List<Map<String, dynamic>> workerList = [
+  List<Map<String, dynamic>> workerList = [
     {
       "workerName": "Name 1",
       "workerType": "Type 1",
@@ -130,7 +130,7 @@ class _CaptainPageState extends State<CaptainPage> {
       "workerType": "Type 8",
       "workingTime": 0,
       "isSelected": false,
-      "isRecorded": false
+      "isRecorded": true
     },
   ];
 
@@ -158,7 +158,15 @@ class _CaptainPageState extends State<CaptainPage> {
     );
   }
 
-  void onSaveInfo() {}
+  void onSaveInfo() {
+    // setState(() {
+    //   workerList = workerList
+    //       .where(
+    //         (element) => element['isRecorded'] == true,
+    //       )
+    //       .toList();
+    // });
+  }
 
   @override
   Widget build(BuildContext context) {

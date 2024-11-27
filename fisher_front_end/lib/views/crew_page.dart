@@ -3,7 +3,7 @@ import 'package:fisher_front_end/widgets/crew_view/crew_id_card.dart';
 import 'package:flutter/material.dart';
 
 class CrewWidget extends StatelessWidget {
-  const CrewWidget({Key? key}) : super(key: key);
+  const CrewWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
