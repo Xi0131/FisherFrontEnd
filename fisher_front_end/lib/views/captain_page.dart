@@ -21,118 +21,136 @@ class _CaptainPageState extends State<CaptainPage> {
   // List of items
   List<Map<String, dynamic>> workerList = [
     {
+      "workerID": 1,
       "workerName": "Name 1",
       "workerType": "Type 1",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 2,
       "workerName": "Name 2",
       "workerType": "Type 2",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 3,
       "workerName": "Name 3",
       "workerType": "Type 3",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 4,
       "workerName": "Name 4",
       "workerType": "Type 4",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 5,
       "workerName": "Name 5",
       "workerType": "Type 5",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 6,
       "workerName": "Name 6",
       "workerType": "Type 6",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 7,
       "workerName": "Name 7",
       "workerType": "Type 7",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 8,
       "workerName": "Name 8",
       "workerType": "Type 8",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 9,
       "workerName": "Name 1",
       "workerType": "Type 1",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 10,
       "workerName": "Name 2",
       "workerType": "Type 2",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 11,
       "workerName": "Name 3",
       "workerType": "Type 3",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 12,
       "workerName": "Name 4",
       "workerType": "Type 4",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 13,
       "workerName": "Name 5",
       "workerType": "Type 5",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 14,
       "workerName": "Name 6",
       "workerType": "Type 6",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 15,
       "workerName": "Name 7",
       "workerType": "Type 7",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": false
     },
     {
+      "workerID": 16,
       "workerName": "Name 8",
       "workerType": "Type 8",
       "workingTime": 0,
-      "isSelected": false,
       "isRecorded": true
     },
   ];
+
+  List<Map<String, dynamic>> workerStatus = [];
+  List<Map<String, dynamic>> workingHour = [];
+
+  @override
+  void initState() {
+    setState(() {
+      for (final element in workerList) {
+        workerStatus.add({
+          "workerID": element['workerID'],
+          "isSelected": false,
+          "isRecorded": element['isRecorded']
+        });
+      }
+    });
+    // debugPrint(workerStatus.toString());
+    super.initState();
+  }
 
   void onUpdateDate(DateTime newDate) {
     setState(
@@ -140,9 +158,17 @@ class _CaptainPageState extends State<CaptainPage> {
     );
   }
 
-  void onWorkderSelect(int index, bool isSelected) {
+  void onWorkerSelect(int workerID) {
     setState(() {
-      workerList[index]['isRecorded'] = !workerList[index]['isRecorded'];
+      for (Map<String, dynamic> worker in workerStatus) {
+        if (worker['workerID'] == workerID) {
+          worker['isSelected'] = !worker['isSelected'];
+          worker['isSelected']
+              ? debugPrint('Worker $workerID is selected')
+              : debugPrint('Worker $workerID is deselected');
+          break;
+        }
+      }
     });
   }
 
@@ -160,7 +186,7 @@ class _CaptainPageState extends State<CaptainPage> {
 
   void onSaveInfo() {
     // setState(() {
-    //   workerList = workerList
+    //   workerStatus = workerStatus
     //       .where(
     //         (element) => element['isRecorded'] == true,
     //       )
@@ -192,10 +218,12 @@ class _CaptainPageState extends State<CaptainPage> {
                   itemCount: workerList.length,
                   itemBuilder: (context, index) {
                     return IdCard(
+                      workerID: workerList[index]['workerID'],
                       workerImage: Image.asset('default.png'),
                       workerName: workerList[index]['workerName'],
                       workerType: workerList[index]['workerType'],
                       isRecorded: workerList[index]['isRecorded'],
+                      onWorkerSelect: onWorkerSelect,
                     );
                   },
                 ),

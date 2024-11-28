@@ -1,5 +1,6 @@
 import 'package:fisher_front_end/views/captain_page.dart';
 import 'package:fisher_front_end/views/crew_page.dart';
+import 'package:fisher_front_end/views/ct_notification_page.dart';
 import 'package:fisher_front_end/views/login_page.dart';
 import 'package:fisher_front_end/views/worker_management_page.dart';
 import 'package:fisher_front_end/widgets/navigation_bar/ct_nav_list.dart';
@@ -11,6 +12,9 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return CupertinoPageRoute(builder: (context) => const CaptainPage());
     case 'ctNavList':
       return CupertinoPageRoute(builder: (context) => const CTNavList());
+    case 'ctNotificationPage':
+      return CupertinoPageRoute(
+          builder: (context) => const CtNotificationPage());
     case 'loginPage':
       return CupertinoPageRoute(builder: (context) => const LoginPage());
     case 'workerManagementPage':

@@ -7,6 +7,8 @@ class CTNavList extends StatelessWidget {
   Widget build(BuildContext context) {
     int numberOfNotices = 0;
 
+    void _getNotificationNumbers() {}
+
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         leading: CupertinoButton(
@@ -53,8 +55,14 @@ class CTNavList extends StatelessWidget {
                 height: double.infinity,
                 color: CupertinoColors.systemRed,
               ),
-              trailing: Text('$numberOfNotices'),
-              onTap: null,
+              trailing: Row(
+                children: [
+                  Text('$numberOfNotices'),
+                  const SizedBox(width: 10),
+                  const Icon(CupertinoIcons.right_chevron)
+                ],
+              ),
+              onTap: () => Navigator.pushNamed(context, 'ctNotificationPage'),
             ),
           ],
         ),

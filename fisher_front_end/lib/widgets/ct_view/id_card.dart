@@ -1,16 +1,20 @@
 import 'package:flutter/cupertino.dart';
 
 class IdCard extends StatefulWidget {
+  final int workerID;
   final Image workerImage;
   final String workerName;
   final String workerType;
   final bool isRecorded;
+  final Function(int) onWorkerSelect;
   const IdCard(
       {super.key,
+      required this.workerID,
       required this.workerImage,
       required this.workerName,
       required this.workerType,
-      required this.isRecorded});
+      required this.isRecorded,
+      required this.onWorkerSelect});
 
   @override
   State<IdCard> createState() => _IdCardState();
@@ -35,6 +39,7 @@ class _IdCardState extends State<IdCard> {
   void _toggleHighlight() {
     setState(() {
       _isHighlighted = !_isHighlighted; // Toggle highlight state
+      widget.onWorkerSelect(widget.workerID);
     });
   }
 
