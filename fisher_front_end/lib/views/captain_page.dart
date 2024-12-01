@@ -13,11 +13,7 @@ class CaptainPage extends StatefulWidget {
 
 class _CaptainPageState extends State<CaptainPage> {
   DateTime date = DateTime.now();
-  int workingTimeSelected12 =
-      0; // uses bitmask to save the first 12 hours working hour
-  int workingTimeSelected24 =
-      0; // uses bitmask to save the last 12 hours working hour
-
+  List<int> workingHour = List.generate(48, (index) => 0);
   // List of items
   List<Map<String, dynamic>> workerList = [
     {
@@ -109,7 +105,7 @@ class _CaptainPageState extends State<CaptainPage> {
       "workerName": "Name 5",
       "workerType": "Type 5",
       "workingTime": 0,
-      "isRecorded": false
+      "isRecorded": true
     },
     {
       "workerID": 14,
@@ -135,11 +131,24 @@ class _CaptainPageState extends State<CaptainPage> {
   ];
 
   List<Map<String, dynamic>> workerStatus = [];
-  List<Map<String, dynamic>> workingHour = [];
+  // {
+  //   "workerID": 123,
+  //   "isSelected": false,
+  //   "isRecorded": false
+  // }
 
   @override
   void initState() {
     setState(() {
+      workerList.sort(
+        (a, b) {
+          if (a['isRecorded'] == true && b['isRecorded'] == true) {
+            return 1;
+          } else {
+            return 0;
+          }
+        },
+      );
       for (final element in workerList) {
         workerStatus.add({
           "workerID": element['workerID'],
@@ -160,6 +169,7 @@ class _CaptainPageState extends State<CaptainPage> {
 
   void onWorkerSelect(int workerID) {
     setState(() {
+      // i cant think about any better implementation at the moment :(
       for (Map<String, dynamic> worker in workerStatus) {
         if (worker['workerID'] == workerID) {
           worker['isSelected'] = !worker['isSelected'];
@@ -172,26 +182,21 @@ class _CaptainPageState extends State<CaptainPage> {
     });
   }
 
-  void onUpdate12(int newWorkingTimeSelected12) {
-    setState(
-      () => workingTimeSelected12 = newWorkingTimeSelected12,
-    );
-  }
-
-  void onUpdate24(int newWorkingTimeSelected24) {
-    setState(
-      () => workingTimeSelected12 = newWorkingTimeSelected24,
-    );
+  void onSetWorkingHour(List<int> newWorkingHour) {
+    for (int i = 0; i < 48; i++) {
+      workingHour[i] = newWorkingHour[i];
+    }
   }
 
   void onSaveInfo() {
-    // setState(() {
-    //   workerStatus = workerStatus
-    //       .where(
-    //         (element) => element['isRecorded'] == true,
-    //       )
-    //       .toList();
-    // });
+    for (Map<String, dynamic> worker in workerStatus) {
+      if (worker['isSelected']) {
+        // for()
+        worker['isSelected'] = false;
+        worker['isRecorded'] = true;
+      }
+    }
+    // send save through api
   }
 
   @override
@@ -216,44 +221,30 @@ class _CaptainPageState extends State<CaptainPage> {
                     childAspectRatio: 2, // Width / Height ratio
                   ),
                   itemCount: workerList.length,
-                  itemBuilder: (context, index) {
-                    return IdCard(
-                      workerID: workerList[index]['workerID'],
-                      workerImage: Image.asset('default.png'),
-                      workerName: workerList[index]['workerName'],
-                      workerType: workerList[index]['workerType'],
-                      isRecorded: workerList[index]['isRecorded'],
-                      onWorkerSelect: onWorkerSelect,
-                    );
-                  },
+                  itemBuilder: (context, index) => IdCard(
+                    workerID: workerList[index]['workerID'],
+                    workerImage: Image.asset('default.png'),
+                    workerName: workerList[index]['workerName'],
+                    workerType: workerList[index]['workerType'],
+                    isRecorded: workerList[index]['isRecorded'],
+                    onWorkerSelect: onWorkerSelect,
+                  ),
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             WorkingHourPicker(
-              workingTimeSelected12: workingTimeSelected12,
-              workingTimeSelected24: workingTimeSelected24,
-              onUpdate12: onUpdate12,
-              onUpdate24: onUpdate24,
+              timeSelected: workingHour,
+              onSetWorkingHour: onSetWorkingHour,
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            // The row widget here is to leave space for addition button
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CupertinoButton(
-                  color: CupertinoColors.systemGrey6,
-                  onPressed: onSaveInfo,
-                  child: const Text(
-                    'Save data',
-                    style: TextStyle(color: CupertinoColors.activeBlue),
-                  ),
-                ),
-              ],
+            const SizedBox(height: 10),
+            CupertinoButton(
+              color: CupertinoColors.systemGrey6,
+              onPressed: onSaveInfo,
+              child: const Text(
+                'Save data',
+                style: TextStyle(color: CupertinoColors.activeBlue),
+              ),
             ),
           ],
         ),

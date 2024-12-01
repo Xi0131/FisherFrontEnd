@@ -1,16 +1,12 @@
 import 'package:flutter/cupertino.dart';
 
 class WorkingHourPicker extends StatefulWidget {
-  final int workingTimeSelected12;
-  final int workingTimeSelected24;
-  final Function(int) onUpdate12;
-  final Function(int) onUpdate24;
+  final List<int> timeSelected;
+  final Function(List<int>) onSetWorkingHour;
   const WorkingHourPicker({
     super.key,
-    required this.workingTimeSelected12,
-    required this.workingTimeSelected24,
-    required this.onUpdate12,
-    required this.onUpdate24,
+    required this.timeSelected,
+    required this.onSetWorkingHour,
   });
 
   @override
@@ -18,28 +14,41 @@ class WorkingHourPicker extends StatefulWidget {
 }
 
 class _WorkingHourPickerState extends State<WorkingHourPicker> {
-  int _workingTimeSelected12 = 0;
-  int _workingTimeSelected24 = 0;
+  List<int> state = List.generate(48, (index) => 0);
 
   @override
   void initState() {
-    _workingTimeSelected12 = widget.workingTimeSelected12;
-    _workingTimeSelected24 = widget.workingTimeSelected24;
+    state = widget.timeSelected;
     super.initState();
   }
 
   void _toggleTime12(int index) {
+    index = index;
     setState(() {
-      _workingTimeSelected12 = _workingTimeSelected12 ^ (2 << index);
-      widget.onUpdate12(_workingTimeSelected12);
+      state[index] += 1;
+      if (state[index] > 2) state[index] = 0;
     });
   }
 
   void _toggleTime24(int index) {
+    index = index + 24;
     setState(() {
-      _workingTimeSelected24 = _workingTimeSelected24 ^ (2 << index);
-      widget.onUpdate12(_workingTimeSelected24);
+      state[index] += 1;
+      if (state[index] > 2) state[index] = 0;
     });
+  }
+
+  Color _getColor(int stateValue) {
+    switch (stateValue) {
+      case 0:
+        return CupertinoColors.systemGrey4;
+      case 1:
+        return CupertinoColors.activeBlue;
+      case 2:
+        return CupertinoColors.activeGreen;
+      default:
+        throw UnimplementedError("State value $stateValue not handled");
+    }
   }
 
   @override
@@ -77,16 +86,8 @@ class _WorkingHourPickerState extends State<WorkingHourPicker> {
                   height: 25,
                   width: 25,
                   decoration: BoxDecoration(
-                    color: _workingTimeSelected12 & (2 << index) != 0
-                        ? CupertinoColors.activeBlue
-                        : CupertinoColors.systemGrey4,
+                    color: _getColor(state[index]),
                     borderRadius: BorderRadius.circular(5.0),
-                    border: Border.all(
-                      color: _workingTimeSelected12 & (2 << index) != 0
-                          ? CupertinoColors.activeBlue
-                          : CupertinoColors.systemGrey4, // Default border color
-                      width: 2.0,
-                    ),
                   ),
                   child: CupertinoButton(
                     onPressed: () => _toggleTime12(index),
@@ -127,16 +128,8 @@ class _WorkingHourPickerState extends State<WorkingHourPicker> {
                   height: 25,
                   width: 25,
                   decoration: BoxDecoration(
-                    color: _workingTimeSelected24 & (2 << index) != 0
-                        ? CupertinoColors.activeBlue
-                        : CupertinoColors.systemGrey4,
+                    color: _getColor(state[index + 24]),
                     borderRadius: BorderRadius.circular(5.0),
-                    border: Border.all(
-                      color: _workingTimeSelected24 & (2 << index) != 0
-                          ? CupertinoColors.activeBlue
-                          : CupertinoColors.systemGrey4, // Default border color
-                      width: 2.0,
-                    ),
                   ),
                   child: CupertinoButton(
                     onPressed: () => _toggleTime24(index),
