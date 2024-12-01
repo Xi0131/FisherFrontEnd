@@ -2,7 +2,6 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 
-
 class AddPersonnelPage extends StatefulWidget {
   final Function(Map<String, String>) onAdd; // 用於回調新增的資料
   final List<String> existingNumbers; // 現有編號列表
@@ -38,6 +37,7 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
       });
     }
   }
+
   // // Work Type 選擇值
   String selectedWorkType = "Select Work Type"; // 預設選擇值
   final List<String> workTypes = [
@@ -84,10 +84,14 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
       isNumberEmpty = numberController.text.trim().isEmpty;
       isWorkTypeEmpty = selectedWorkType == "Select Work Type";
       // 檢查編號是否重複
-      isNumberDuplicate = widget.existingNumbers.contains(numberController.text.trim());
+      isNumberDuplicate =
+          widget.existingNumbers.contains(numberController.text.trim());
     });
     // 如果所有必填項都填寫，新增人員
-    if (!isNameEmpty && !isNumberEmpty && !isWorkTypeEmpty && !isNumberDuplicate) {
+    if (!isNameEmpty &&
+        !isNumberEmpty &&
+        !isWorkTypeEmpty &&
+        !isNumberDuplicate) {
       widget.onAdd({
         "name": nameController.text,
         "number": numberController.text,
@@ -104,7 +108,8 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar( //上一頁
+      navigationBar: CupertinoNavigationBar(
+        //上一頁
         leading: CupertinoButton(
           padding: EdgeInsets.zero, // 移除默認內邊距
           child: const Icon(
@@ -116,12 +121,14 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
           },
         ),
       ),
-      child: SingleChildScrollView( // 滾動視窗
+      child: SingleChildScrollView(
+        // 滾動視窗
         child: Padding(
           padding: const EdgeInsets.all(80),
           child: Column(
             children: [
-              CupertinoButton( //上傳大頭照
+              CupertinoButton(
+                //上傳大頭照
                 padding: EdgeInsets.zero, // 去掉預設的 padding
                 onPressed: _pickImage,
                 child: Container(
@@ -134,13 +141,13 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
                   child: _image == null
                       ? const Icon(CupertinoIcons.photo, size: 50)
                       : ClipOval(
-                    child: Image.file(
-                      _image!,
-                      fit: BoxFit.cover,
-                      width: 200,
-                      height: 200,
-                    ),
-                  ),
+                          child: Image.file(
+                            _image!,
+                            fit: BoxFit.cover,
+                            width: 200,
+                            height: 200,
+                          ),
+                        ),
                 ),
               ),
               //頭像圓形
@@ -159,7 +166,7 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
               // ),
               const SizedBox(height: 20),
 
-                  // 輸入框
+              // 輸入框
               _buildTextField(
                 controller: nameController,
                 placeholder: "Name",
@@ -172,15 +179,18 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
                 isEmpty: isNumberEmpty,
                 isDuplicate: isNumberDuplicate,
               ),
-                  //age
+              //age
               const SizedBox(height: 10),
-              _buildCupertinoTextField(placeholder: "Age", controller: ageController),
+              _buildCupertinoTextField(
+                  placeholder: "Age", controller: ageController),
 
               const SizedBox(height: 10),
-              _buildCupertinoTextField(placeholder: "Passport", controller: passportController),
+              _buildCupertinoTextField(
+                  placeholder: "Passport", controller: passportController),
 
               const SizedBox(height: 10),
-              _buildCupertinoTextField(placeholder: "Country", controller: countryController),
+              _buildCupertinoTextField(
+                  placeholder: "Country", controller: countryController),
 
               const SizedBox(height: 10),
               // Work Type 選單
@@ -188,7 +198,8 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
                 padding: EdgeInsets.zero, // 去除內邊距
                 onPressed: () => _showWorkTypePicker(context),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 30, horizontal: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
@@ -237,9 +248,10 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
 
               const SizedBox(height: 40),
 
-                  // 按鈕
+              // 按鈕
               CupertinoButton.filled(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20), // 按鈕大小
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 40, vertical: 20), // 按鈕大小
                 onPressed: validateAndAdd, // *** 按下時檢查必填欄位 ***
                 child: const Text(
                   "Add",
@@ -311,7 +323,8 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
   Widget _buildCupertinoTextField({
     required String placeholder,
     required TextEditingController controller,
-    EdgeInsetsGeometry padding = const EdgeInsets.only(top: 30, bottom: 30, left: 30),
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.only(top: 30, bottom: 30, left: 30),
     TextStyle textStyle = const TextStyle(fontSize: 24),
   }) {
     return CupertinoTextField(
@@ -328,7 +341,6 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
       ),
     );
   }
-
 
   // 顯示 Work Type 選單
   void _showWorkTypePicker(BuildContext context) {
@@ -350,11 +362,11 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
                 },
                 children: workTypes
                     .map((type) => Center(
-                  child: Text(
-                    type,
-                    style: const TextStyle(fontSize: 24),
-                  ),
-                ))
+                          child: Text(
+                            type,
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                        ))
                     .toList(),
               ),
             ),
@@ -368,141 +380,3 @@ class AddPersonnelPageState extends State<AddPersonnelPage> {
     );
   }
 }
-
-// import 'package:flutter/cupertino.dart';
-
-// class AddPersonnelPage extends StatefulWidget {
-//   final Function(Map<String, String>) onAdd; // 用於回調新增的資料
-
-//   const AddPersonnelPage({
-//     super.key,
-//     required this.onAdd,
-//   });
-
-//   @override
-//   AddPersonnelPageState createState() => AddPersonnelPageState();
-// }
-
-// class AddPersonnelPageState extends State<AddPersonnelPage> {
-//   // 控制輸入框的控制器
-//   late TextEditingController nameController;
-//   late TextEditingController numberController;
-//   late TextEditingController birthdayController;
-//   late TextEditingController countryController;
-//   late TextEditingController roleController;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     // 初始化每個 TextEditingController，預設為空
-//     nameController = TextEditingController();
-//     numberController = TextEditingController();
-//     birthdayController = TextEditingController();
-//     countryController = TextEditingController();
-//     roleController = TextEditingController();
-//   }
-
-//   @override
-//   void dispose() {
-//     // 釋放 TextEditingController 資源
-//     nameController.dispose();
-//     numberController.dispose();
-//     birthdayController.dispose();
-//     countryController.dispose();
-//     roleController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return CupertinoPageScaffold(
-//       navigationBar: CupertinoNavigationBar(
-//         trailing: CupertinoButton(
-//           padding: EdgeInsets.zero,
-//           child: const Icon(CupertinoIcons.back),
-//           onPressed: () => Navigator.pop(context), // 返回上一頁
-//         ),
-//       ),
-//       child: Padding(
-//         padding: const EdgeInsets.all(80),
-//         child: Column(
-//           children: [
-//             // 頭像圓形
-//             Container(
-//               width: 200, // 藍色圈圈大小
-//               height: 200, // 藍色圈圈大小
-//               decoration: const BoxDecoration(
-//                 color: CupertinoColors.activeBlue,
-//                 shape: BoxShape.circle,
-//               ),
-//               child: const Icon(
-//                 CupertinoIcons.person,
-//                 size: 100, // 圓圈內的小人圖標大小
-//                 color: CupertinoColors.white,
-//               ),
-//             ),
-//             const SizedBox(height: 20),
-
-//             // 輸入框
-//             CupertinoTextField(
-//               placeholder: "Name",
-//               controller: nameController,
-//               padding: const EdgeInsets.all(30),
-//               style: const TextStyle(fontSize: 24), // 輸入框文字大小
-//             ),
-//             const SizedBox(height: 10),
-//             CupertinoTextField(
-//               placeholder: "Number",
-//               controller: numberController,
-//               padding: const EdgeInsets.all(30),
-//               style: const TextStyle(fontSize: 24), // 輸入框文字大小
-//             ),
-//             const SizedBox(height: 10),
-//             CupertinoTextField(
-//               placeholder: "Birthday",
-//               controller: birthdayController,
-//               padding: const EdgeInsets.all(30),
-//               style: const TextStyle(fontSize: 24), // 輸入框文字大小
-//             ),
-//             const SizedBox(height: 10),
-//             CupertinoTextField(
-//               placeholder: "Country",
-//               controller: countryController,
-//               padding: const EdgeInsets.all(30),
-//               style: const TextStyle(fontSize: 24), // 輸入框文字大小
-//             ),
-//             const SizedBox(height: 10),
-//             CupertinoTextField(
-//               placeholder: "Work Type",
-//               controller: roleController,
-//               padding: const EdgeInsets.all(30),
-//               style: const TextStyle(fontSize: 24), // 輸入框文字大小
-//             ),
-//             const SizedBox(height: 30),
-
-//             // 按鈕
-//             CupertinoButton.filled(
-//               padding: const EdgeInsets.symmetric(
-//                   horizontal: 40, vertical: 20), // 按鈕大小
-//               child: const Text(
-//                 "Add",
-//                 style: TextStyle(fontSize: 24), // 按鈕文字大小
-//               ),
-//               onPressed: () {
-//                 // 新增資料
-//                 widget.onAdd({
-//                   "name": nameController.text,
-//                   "number": numberController.text,
-//                   "birthday": birthdayController.text,
-//                   "country": countryController.text,
-//                   "role": roleController.text,
-//                 });
-//                 Navigator.pop(context); // 返回主頁面
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
