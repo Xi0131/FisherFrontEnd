@@ -176,24 +176,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                // child: Container(
-                //   decoration: BoxDecoration(
-                //     color: CupertinoColors.activeBlue,
-                //     borderRadius: BorderRadius.circular(100), // 圓角
-                //   ),
-                //   padding: const EdgeInsets.symmetric(
-                //     vertical: 20, // 控制按鈕的高度
-                //     horizontal: 45, // 控制按鈕的寬度
-                //   ),
-                //   child: const Text(
-                //     'LOGIN',
-                //     style: TextStyle(
-                //       fontSize: 40, // 合理的字體大小
-                //       color: CupertinoColors.white,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                // ),
               ),
 
             ],
