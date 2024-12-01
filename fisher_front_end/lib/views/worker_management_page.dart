@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
-import 'edit_personnel_page.dart' ;//導入 EditPersonnelPage
+import 'package:fisher_front_end/views/edit_personnel_page.dart';//導入 EditPersonnelPage
 import 'add_people.dart';
 
 class PeopleManagementPage extends StatefulWidget {
