@@ -3,21 +3,15 @@ import 'dart:io';
 import 'package:fisher_front_end/views/edit_personnel_page.dart';//導入 EditPersonnelPage
 import 'add_people.dart';
 
-class PeopleManagementPage extends StatefulWidget {
-  const PeopleManagementPage({super.key});
+class WorkerManagementPageState extends StatefulWidget {
+  const WorkerManagementPageState({super.key});
 
   @override
-  PeopleManagementPageState createState() => PeopleManagementPageState();
+  WorkerManagementPageState createState() => WorkerManagementPageState();
 }
 
-class PeopleManagementPageState extends State<PeopleManagementPage> {
-  final List<Map<String, String>> personnel = [
-    //{"name": "John", "number": "001", "role": "Fisherman", "passport": "1990-01-01", "country": "USA", "image": "path_to_image"},
-    //{"name": "Jane", "number": "002", "role": "Deckhands", "passport": "1995-02-02", "country": "Canada", "image": "path_to_image"},
-    // {"name": "John", "number": "001", "role": "Fisherman", "passport": "1990-01-01", "country": "USA"},
-    // {"name": "Jane", "number": "002", "role": "Deckhands", "passport": "1995-02-02", "country": "Canada"},
-    // {"name": "Tom", "number": "003", "role": "FishProcessors", "passport": "1988-03-03", "country": "UK"},
-  ];
+class WorkerManagementPageState extends State<WorkerManagementPageState> {
+  final List<Map<String, String>> personnel = [];
 
   String selectedCategory = 'All';
   final List<String> categories = [
