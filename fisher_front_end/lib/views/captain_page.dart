@@ -209,7 +209,7 @@ class _CaptainPageState extends State<CaptainPage> {
             const SizedBox(height: 20),
             DatePicker(date: date, onUpdateDate: onUpdateDate),
             // show workers
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             SizedBox(
               height: 400,
               width: 1500,

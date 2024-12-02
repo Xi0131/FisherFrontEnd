@@ -59,14 +59,14 @@ class _DatePickerState extends State<DatePicker> {
           child: const SizedBox(
             child: Icon(
               CupertinoIcons.left_chevron,
-              size: 30,
+              size: 40,
             ),
           ),
         ),
         CupertinoButton(
             child: Text('${_date.month}-${_date.day}-${_date.year}',
                 style: const TextStyle(
-                  fontSize: 30.0,
+                  fontSize: 40,
                 )),
             onPressed: () => _showDialog(
                   CupertinoDatePicker(
@@ -89,7 +89,7 @@ class _DatePickerState extends State<DatePicker> {
           child: const SizedBox(
             child: Icon(
               CupertinoIcons.right_chevron,
-              size: 30,
+              size: 40,
             ),
           ),
         ),
