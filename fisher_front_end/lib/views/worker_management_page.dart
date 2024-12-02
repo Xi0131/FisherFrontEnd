@@ -54,7 +54,7 @@ class _WorkerManagementPageState extends State<WorkerManagementPage> {
           Padding(
             padding: const EdgeInsets.only(top: 80, bottom: 5),
             child: SizedBox(
-              height: 80,
+              height: 60,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: categories.map((category) {
@@ -87,7 +87,7 @@ class _WorkerManagementPageState extends State<WorkerManagementPage> {
                                 color: isSelected
                                     ? CupertinoColors.white
                                     : CupertinoColors.black,
-                                fontSize: 35,
+                                fontSize: 20,
                               ),
                             ),
                           ),
