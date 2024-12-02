@@ -1,164 +1,219 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class CrewCalendar extends StatefulWidget {
-  const CrewCalendar({super.key});
-
   @override
-  CrewCalendarState createState() => CrewCalendarState();
+  _CrewCalendarState createState() => _CrewCalendarState();
 }
 
-class CrewCalendarState extends State<CrewCalendar> {
+class _CrewCalendarState extends State<CrewCalendar> {
   int selectedYear = DateTime.now().year;
   int selectedMonth = DateTime.now().month;
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double gridPadding = 16.0;
-    final double cellSpacing = 8.0;
-    final double cellSize =
-        (screenWidth - gridPadding * 2 - cellSpacing * 6) / 7;
-
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.4),
-              blurRadius: 10.0,
-              offset: const Offset(0, 5),
-            ),
-          ],
+    return Column(
+      children: [
+        // 月份選擇器
+        Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: Icon(CupertinoIcons.left_chevron),
+                onPressed: () {
+                  setState(() {
+                    if (selectedMonth == 1) {
+                      selectedMonth = 12;
+                      selectedYear--;
+                    } else {
+                      selectedMonth--;
+                    }
+                  });
+                },
+              ),
+              GestureDetector(
+                onTap: () => _showPicker(context),
+                child: Row(
+                  children: [
+                    Text(
+                      '$selectedYear ${_getMonthName(selectedMonth)}',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Icon(CupertinoIcons.chevron_down),
+                  ],
+                ),
+              ),
+              CupertinoButton(
+                padding: EdgeInsets.zero,
+                child: Icon(CupertinoIcons.right_chevron),
+                onPressed: () {
+                  setState(() {
+                    if (selectedMonth == 12) {
+                      selectedMonth = 1;
+                      selectedYear++;
+                    } else {
+                      selectedMonth++;
+                    }
+                  });
+                },
+              ),
+            ],
+          ),
         ),
+        // 星期標題
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 4.0),
+          child: Row(
+            children: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                .map(
+                  (e) => Expanded(
+                    child: Center(
+                      child: Text(
+                        e,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+        // 月曆網格
+        Expanded(
+          child: _buildCalendarGrid(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCalendarGrid() {
+    int daysInMonth = _getDaysInMonth(selectedYear, selectedMonth);
+    int firstWeekday = _getFirstWeekdayOfMonth(selectedYear, selectedMonth);
+
+    // 計算需要顯示的總單元格數量
+    int totalCells = ((daysInMonth + firstWeekday - 1) / 7).ceil() * 7;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double gridWidth = constraints.maxWidth;
+        double gridHeight = constraints.maxHeight;
+
+        // 減小格子之間的間距
+        double cellMargin = 1.0;
+
+        // 計算格子的寬度和高度，確保不會超出可用空間
+        double cellWidth = (gridWidth - cellMargin * 2 * 7) / 7;
+        int numberOfRows = (totalCells / 7).ceil();
+        double cellHeight =
+            (gridHeight - cellMargin * 2 * numberOfRows) / numberOfRows;
+
+        return GridView.builder(
+          padding: EdgeInsets.zero,
+          physics: NeverScrollableScrollPhysics(), // 禁用滾動
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7, // 一週7天
+            childAspectRatio: cellWidth / cellHeight, // 根據計算結果設定寬高比
+            crossAxisSpacing: cellMargin * 2,
+            mainAxisSpacing: cellMargin * 2,
+          ),
+          itemCount: totalCells,
+          itemBuilder: (context, index) {
+            int dayNum = index - firstWeekday + 2;
+            if (index < firstWeekday - 1 || dayNum > daysInMonth) {
+              // 空白單元格
+              return Container(
+                margin: EdgeInsets.all(cellMargin),
+              );
+            } else {
+              // 日期單元格
+              return GestureDetector(
+                onTap: () {
+                  _showDayDetail(context, dayNum);
+                },
+                child: Container(
+                  margin: EdgeInsets.all(cellMargin),
+                  alignment: Alignment.center,
+                  child: Text('$dayNum'),
+                ),
+              );
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void _showPicker(BuildContext context) {
+    int tempYear = selectedYear;
+    int tempMonth = selectedMonth;
+
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => Container(
+        height: 250,
+        color: CupertinoColors.systemBackground.resolveFrom(context),
         child: Column(
           children: [
-            // 年份和月份選擇
+            // 操作按鈕
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_left),
+                CupertinoButton(
+                  child: Text('取消'),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                CupertinoButton(
+                  child: Text('確定'),
                   onPressed: () {
                     setState(() {
-                      if (selectedMonth == 1) {
-                        selectedMonth = 12;
-                        selectedYear--;
-                      } else {
-                        selectedMonth--;
-                      }
+                      selectedYear = tempYear;
+                      selectedMonth = tempMonth;
                     });
-                  },
-                ),
-                GestureDetector(
-                  onTap: () => _showPicker(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '$selectedYear | ${_getMonthName(selectedMonth).toUpperCase()}',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Icon(Icons.arrow_drop_down),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.arrow_right),
-                  onPressed: () {
-                    setState(() {
-                      if (selectedMonth == 12) {
-                        selectedMonth = 1;
-                        selectedYear++;
-                      } else {
-                        selectedMonth++;
-                      }
-                    });
+                    Navigator.pop(context);
                   },
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            // 星期標頭
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text('Mon'),
-                Text('Tue'),
-                Text('Wed'),
-                Text('Thu'),
-                Text('Fri'),
-                Text('Sat'),
-                Text('Sun'),
-              ],
-            ),
-            const SizedBox(height: 10),
-            // 滾動月曆網格
+            // 年月選擇器
             Expanded(
-              child: SingleChildScrollView(
-                child: GridView.builder(
-                  shrinkWrap: true, // 嵌套滾動
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(8.0),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7, // 一週七天
-                    crossAxisSpacing: cellSpacing,
-                    mainAxisSpacing: cellSpacing,
-                    childAspectRatio: 1.0, // 保持正方形
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CupertinoPicker(
+                      scrollController: FixedExtentScrollController(
+                        initialItem: tempYear - 2000,
+                      ),
+                      itemExtent: 32,
+                      onSelectedItemChanged: (int index) {
+                        tempYear = 2000 + index;
+                      },
+                      children: List<Widget>.generate(50, (int index) {
+                        return Center(
+                          child: Text('${2000 + index}年'),
+                        );
+                      }),
+                    ),
                   ),
-                  itemCount: _getGridItemCount(selectedYear, selectedMonth),
-                  itemBuilder: (context, index) {
-                    final daysInMonth =
-                        DateUtils.getDaysInMonth(selectedYear, selectedMonth);
-                    final firstWeekday =
-                        _getFirstWeekdayOfMonth(selectedYear, selectedMonth);
-
-                    if (index < firstWeekday - 1) {
-                      return const SizedBox(); // 空白方格
-                    } else {
-                      int day = index - (firstWeekday - 2);
-                      if (day > daysInMonth) {
-                        return const SizedBox();
-                      }
-                      return GestureDetector(
-                        onTap: () {
-                          // 點擊日期顯示詳情
-                          debugPrint("hihihi");
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(
-                                  '$selectedYear年${_getMonthName(selectedMonth)}$day日'),
-                              content: const Text('顯示當天的詳細工作'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('關閉'),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(4.0),
-                            color: Colors.grey[100],
-                          ),
-                          child: Text('$day'),
-                        ),
-                      );
-                    }
-                  },
-                ),
+                  Expanded(
+                    child: CupertinoPicker(
+                      scrollController: FixedExtentScrollController(
+                        initialItem: tempMonth - 1,
+                      ),
+                      itemExtent: 32,
+                      onSelectedItemChanged: (int index) {
+                        tempMonth = index + 1;
+                      },
+                      children: List<Widget>.generate(12, (int index) {
+                        return Center(
+                          child: Text('${index + 1}月'),
+                        );
+                      }),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -167,115 +222,69 @@ class CrewCalendarState extends State<CrewCalendar> {
     );
   }
 
-  void _showPicker(BuildContext context) {
-    int tempYear = selectedYear;
-    int tempMonth = selectedMonth;
-
-    showModalBottomSheet(
+  void _showDayDetail(BuildContext context, int day) {
+    showCupertinoDialog(
       context: context,
-      builder: (context) {
-        return Container(
-          height: 300,
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("取消"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        selectedYear = tempYear;
-                        selectedMonth = tempMonth;
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: const Text("確定"),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: CupertinoPicker(
-                        scrollController: FixedExtentScrollController(
-                          initialItem: DateTime.now().year - tempYear + 25,
-                        ),
-                        itemExtent: 40,
-                        onSelectedItemChanged: (index) {
-                          tempYear = DateTime.now().year - 25 + index;
-                        },
-                        children: List.generate(
-                          50,
-                          (index) => Center(
-                            child: Text(
-                              '${DateTime.now().year - 25 + index}',
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const VerticalDivider(width: 1, color: Colors.grey),
-                    Expanded(
-                      child: CupertinoPicker(
-                        scrollController: FixedExtentScrollController(
-                          initialItem: tempMonth - 1,
-                        ),
-                        itemExtent: 40,
-                        onSelectedItemChanged: (index) {
-                          tempMonth = index + 1;
-                        },
-                        children: List.generate(
-                          12,
-                          (index) => Center(
-                            child: Text(
-                              _getMonthName(index + 1),
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+      builder: (context) => CupertinoAlertDialog(
+        title: Text('$selectedYear年$selectedMonth月$day日'),
+        content: Column(
+          children: [
+            SizedBox(height: 10),
+            Text('顯示當天的詳細工作情況（時數）'),
+            SizedBox(height: 16),
+            // 簽名區域（這裡可以替換成實際的簽名元件）
+            Container(
+              height: 100,
+              color: CupertinoColors.systemGrey4,
+              child: Center(child: Text('簽名區域')),
+            ),
+          ],
+        ),
+        actions: [
+          CupertinoDialogAction(
+            child: Text('取消'),
+            onPressed: () => Navigator.pop(context),
           ),
-        );
-      },
+          CupertinoDialogAction(
+            child: Text('確認'),
+            onPressed: () {
+              // 在這裡處理簽名確認的邏輯
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
     );
   }
 
   int _getFirstWeekdayOfMonth(int year, int month) {
-    return DateTime(year, month, 1).weekday;
+    // 在 Dart 中，星期一為 1，星期天為 7
+    int weekday = DateTime(year, month, 1).weekday;
+    return weekday;
   }
 
-  int _getGridItemCount(int year, int month) {
-    final daysInMonth = DateUtils.getDaysInMonth(year, month);
-    final firstWeekday = _getFirstWeekdayOfMonth(year, month);
-    return daysInMonth + firstWeekday - 1;
+  int _getDaysInMonth(int year, int month) {
+    if (month == 12) {
+      return DateTime(year + 1, 1, 0).day;
+    } else {
+      return DateTime(year, month + 1, 0).day;
+    }
   }
 
   String _getMonthName(int month) {
     const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return months[month - 1];
   }

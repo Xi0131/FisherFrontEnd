@@ -17,6 +17,8 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           builder: (context) => const CtNotificationPage());
     case 'loginPage':
       return CupertinoPageRoute(builder: (context) => const LoginPage());
+    case 'crewPage':
+      return CupertinoPageRoute(builder: (context) => CrewPage());
     case 'workerManagementPage':
       return CupertinoPageRoute(
           builder: (context) => const WorkerManagementPage());
