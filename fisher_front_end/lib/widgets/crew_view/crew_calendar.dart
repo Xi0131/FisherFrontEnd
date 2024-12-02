@@ -44,6 +44,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold),
                     ),
+                    const SizedBox(width: 10),
                     const Icon(CupertinoIcons.chevron_down),
                   ],
                 ),
