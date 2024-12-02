@@ -46,6 +46,7 @@ class _WorkerManagementPageState extends State<WorkerManagementPage> {
             Navigator.pop(context); // 返回上一頁
           },
         ),
+        middle: const Text('Crew Management'),
       ),
       // *** navigationBar 區域結束 ***
       child: Column(
