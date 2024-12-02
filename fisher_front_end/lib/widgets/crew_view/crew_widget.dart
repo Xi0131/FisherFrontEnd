@@ -11,7 +11,7 @@ class CrewWidget extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.all(16.0),
         color: Colors.grey[200], // 背景顏色
-        child: Row(
+        child: const Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 左側：船員資訊

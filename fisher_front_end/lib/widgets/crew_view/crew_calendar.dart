@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 
 class CrewCalendar extends StatefulWidget {
+  const CrewCalendar({super.key});
+
   @override
-  _CrewCalendarState createState() => _CrewCalendarState();
+  State<CrewCalendar> createState() => _CrewCalendarState();
 }
 
 class _CrewCalendarState extends State<CrewCalendar> {
@@ -15,13 +17,13 @@ class _CrewCalendarState extends State<CrewCalendar> {
       children: [
         // 月份選擇器
         Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               CupertinoButton(
                 padding: EdgeInsets.zero,
-                child: Icon(CupertinoIcons.left_chevron),
+                child: const Icon(CupertinoIcons.left_chevron),
                 onPressed: () {
                   setState(() {
                     if (selectedMonth == 1) {
@@ -39,16 +41,16 @@ class _CrewCalendarState extends State<CrewCalendar> {
                   children: [
                     Text(
                       '$selectedYear ${_getMonthName(selectedMonth)}',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Icon(CupertinoIcons.chevron_down),
+                    const Icon(CupertinoIcons.chevron_down),
                   ],
                 ),
               ),
               CupertinoButton(
                 padding: EdgeInsets.zero,
-                child: Icon(CupertinoIcons.right_chevron),
+                child: const Icon(CupertinoIcons.right_chevron),
                 onPressed: () {
                   setState(() {
                     if (selectedMonth == 12) {
@@ -65,7 +67,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
         ),
         // 星期標題
         Container(
-          padding: EdgeInsets.symmetric(vertical: 4.0),
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Row(
             children: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
                 .map(
@@ -73,7 +75,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                     child: Center(
                       child: Text(
                         e,
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -112,7 +114,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
 
         return GridView.builder(
           padding: EdgeInsets.zero,
-          physics: NeverScrollableScrollPhysics(), // 禁用滾動
+          physics: const NeverScrollableScrollPhysics(), // 禁用滾動
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 7, // 一週7天
             childAspectRatio: cellWidth / cellHeight, // 根據計算結果設定寬高比
@@ -162,11 +164,11 @@ class _CrewCalendarState extends State<CrewCalendar> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CupertinoButton(
-                  child: Text('取消'),
+                  child: const Text('取消'),
                   onPressed: () => Navigator.pop(context),
                 ),
                 CupertinoButton(
-                  child: Text('確定'),
+                  child: const Text('確定'),
                   onPressed: () {
                     setState(() {
                       selectedYear = tempYear;
@@ -229,24 +231,24 @@ class _CrewCalendarState extends State<CrewCalendar> {
         title: Text('$selectedYear年$selectedMonth月$day日'),
         content: Column(
           children: [
-            SizedBox(height: 10),
-            Text('顯示當天的詳細工作情況（時數）'),
-            SizedBox(height: 16),
+            const SizedBox(height: 10),
+            const Text('顯示當天的詳細工作情況（時數）'),
+            const SizedBox(height: 16),
             // 簽名區域（這裡可以替換成實際的簽名元件）
             Container(
               height: 100,
               color: CupertinoColors.systemGrey4,
-              child: Center(child: Text('簽名區域')),
+              child: const Center(child: Text('簽名區域')),
             ),
           ],
         ),
         actions: [
           CupertinoDialogAction(
-            child: Text('取消'),
+            child: const Text('取消'),
             onPressed: () => Navigator.pop(context),
           ),
           CupertinoDialogAction(
-            child: Text('確認'),
+            child: const Text('確認'),
             onPressed: () {
               // 在這裡處理簽名確認的邏輯
               Navigator.pop(context);
