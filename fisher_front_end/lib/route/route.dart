@@ -23,8 +23,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     case 'workerManagementPage':
       return CupertinoPageRoute(
           builder: (context) => const WorkerManagementPage());
-    case 'crewWidget':
-      return CupertinoPageRoute(builder: (context) => const CrewWidget());
     default:
       return CupertinoPageRoute(
           builder: (context) => const CaptainPage()); // Default fallback
