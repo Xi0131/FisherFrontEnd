@@ -32,7 +32,7 @@ class PersonnelCard extends StatelessWidget {
           children: [
             Container(
               width: 300, //長方形大小
-              height: 180, //圓形大小
+              height: 110, //圓形大小
               decoration: const BoxDecoration(
                 color: CupertinoColors.activeBlue,
                 shape: BoxShape.circle,
@@ -43,30 +43,29 @@ class PersonnelCard extends StatelessWidget {
                         File(image), // 顯示本地圖片
                         fit: BoxFit.cover,
                         width: 300,
-                        height: 180,
+                        height: 110,
                       ),
                     )
                   : const Icon(
                       CupertinoIcons.person,
-                      size: 90,
+                      size: 70,
                       color: CupertinoColors.white,
                     ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             Text(
               name,
               style: const TextStyle(
-                fontSize: 40,
+                fontSize: 30,
                 fontWeight: FontWeight.bold,
                 color: CupertinoColors.black,
               ),
             ),
-            const SizedBox(height: 5),
             Text(
               "No. $number",
               style: const TextStyle(
                 color: CupertinoColors.systemGrey,
-                fontSize: 40,
+                fontSize: 30,
               ),
             ),
           ],

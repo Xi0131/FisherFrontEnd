@@ -457,10 +457,10 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
                     .toList(),
               ),
             ),
-            CupertinoButton(
-              child: const Text("Confirm"),
-              onPressed: () => Navigator.pop(context),
-            ),
+            // CupertinoButton(
+            //   child: const Text("Confirm"),
+            //   onPressed: () => Navigator.pop(context),
+            // ),
           ],
         ),
       ),
