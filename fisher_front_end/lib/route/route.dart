@@ -24,6 +24,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           builder: (context) => const WorkerManagementPage());
     default:
       return CupertinoPageRoute(
-          builder: (context) => const CaptainPage()); // Default fallback
+          builder: (context) => const LoginPage()); // Default fallback
   }
 }
