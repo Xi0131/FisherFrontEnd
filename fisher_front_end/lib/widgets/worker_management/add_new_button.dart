@@ -22,7 +22,7 @@ class AddNewButton extends StatelessWidget {
           children: [
             Icon(
               CupertinoIcons.add_circled,
-              size: 180,
+              size: 120,
               color: CupertinoColors.activeBlue,
             ),
             SizedBox(height: 10),
@@ -30,7 +30,7 @@ class AddNewButton extends StatelessWidget {
               "Add New",
               style: TextStyle(
                 color: CupertinoColors.activeBlue,
-                fontSize: 40,
+                fontSize: 30,
               ),
             ),
           ],
