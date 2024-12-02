@@ -206,16 +206,18 @@ class _CaptainPageState extends State<CaptainPage> {
       child: SafeArea(
         child: Column(
           children: [
+            const SizedBox(height: 20),
             DatePicker(date: date, onUpdateDate: onUpdateDate),
             // show workers
+            const SizedBox(height: 20),
             SizedBox(
-              height: 300,
-              width: 800,
+              height: 400,
+              width: 1500,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
+                    crossAxisCount: 5,
                     mainAxisSpacing: 5, // Space between rows
                     crossAxisSpacing: 5, // Space between columns
                     childAspectRatio: 2, // Width / Height ratio
@@ -237,13 +239,20 @@ class _CaptainPageState extends State<CaptainPage> {
               timeSelected: workingHour,
               onSetWorkingHour: onSetWorkingHour,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 30),
             CupertinoButton(
               color: CupertinoColors.systemGrey6,
               onPressed: onSaveInfo,
-              child: const Text(
-                'Save data',
-                style: TextStyle(color: CupertinoColors.activeBlue),
+              child: const SizedBox(
+                height: 50,
+                width: 200,
+                child: Center(
+                  child: Text(
+                    'Save data',
+                    style: TextStyle(
+                        fontSize: 30, color: CupertinoColors.activeBlue),
+                  ),
+                ),
               ),
             ),
           ],

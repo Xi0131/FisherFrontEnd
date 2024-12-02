@@ -47,8 +47,8 @@ class _IdCardState extends State<IdCard> {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        height: 100,
-        width: 200,
+        height: 150,
+        width: 300,
         foregroundDecoration: _isRecorded
             ? const BoxDecoration(
                 color: CupertinoColors.systemGrey,
@@ -71,8 +71,8 @@ class _IdCardState extends State<IdCard> {
           child: Row(
             children: [
               SizedBox(
-                height: 100,
-                width: 80,
+                height: 150,
+                width: 120,
                 child: _workerHeadImage,
               ),
               const SizedBox(
@@ -83,19 +83,19 @@ class _IdCardState extends State<IdCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 80,
+                    width: 120,
                     child: Text(
                       _workerName,
                       softWrap: false,
-                      style: const TextStyle(fontSize: 15),
+                      style: const TextStyle(fontSize: 30),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   SizedBox(
-                    width: 80,
+                    width: 120,
                     child: Text(
                       _workerType,
-                      style: const TextStyle(fontSize: 10),
+                      style: const TextStyle(fontSize: 20),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

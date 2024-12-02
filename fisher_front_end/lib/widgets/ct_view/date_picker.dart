@@ -57,13 +57,16 @@ class _DatePickerState extends State<DatePicker> {
             widget.onUpdateDate(_date);
           }),
           child: const SizedBox(
-            child: Icon(CupertinoIcons.left_chevron),
+            child: Icon(
+              CupertinoIcons.left_chevron,
+              size: 30,
+            ),
           ),
         ),
         CupertinoButton(
             child: Text('${_date.month}-${_date.day}-${_date.year}',
                 style: const TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 30.0,
                 )),
             onPressed: () => _showDialog(
                   CupertinoDatePicker(
@@ -84,7 +87,10 @@ class _DatePickerState extends State<DatePicker> {
             widget.onUpdateDate(_date);
           }),
           child: const SizedBox(
-            child: Icon(CupertinoIcons.right_chevron),
+            child: Icon(
+              CupertinoIcons.right_chevron,
+              size: 30,
+            ),
           ),
         ),
       ],

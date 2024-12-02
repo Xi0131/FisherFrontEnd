@@ -64,13 +64,19 @@ class _WorkingHourPickerState extends State<WorkingHourPicker> {
                 return Row(
                   children: [
                     SizedBox(
-                      height: 25,
-                      width: 25,
-                      child: Text('$index'),
+                      height: 40,
+                      width: 40,
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          '$index',
+                          style: const TextStyle(fontSize: 25),
+                        ),
+                      ),
                     ),
                     const SizedBox(
-                      height: 25,
-                      width: 25,
+                      height: 40,
+                      width: 40,
                     ),
                   ],
                 );
@@ -83,8 +89,8 @@ class _WorkingHourPickerState extends State<WorkingHourPicker> {
               24,
               (index) {
                 return Container(
-                  height: 25,
-                  width: 25,
+                  height: 40,
+                  width: 40,
                   decoration: BoxDecoration(
                     color: _getColor(state[index]),
                     borderRadius: BorderRadius.circular(5.0),
@@ -106,13 +112,19 @@ class _WorkingHourPickerState extends State<WorkingHourPicker> {
                 return Row(
                   children: [
                     SizedBox(
-                      height: 25,
-                      width: 25,
-                      child: Text('${index + 12}'),
+                      height: 40,
+                      width: 40,
+                      child: Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          '${index + 12}',
+                          style: const TextStyle(fontSize: 25),
+                        ),
+                      ),
                     ),
                     const SizedBox(
-                      height: 25,
-                      width: 25,
+                      height: 40,
+                      width: 40,
                     ),
                   ],
                 );
@@ -125,8 +137,8 @@ class _WorkingHourPickerState extends State<WorkingHourPicker> {
               24,
               (index) {
                 return Container(
-                  height: 25,
-                  width: 25,
+                  height: 40,
+                  width: 40,
                   decoration: BoxDecoration(
                     color: _getColor(state[index + 24]),
                     borderRadius: BorderRadius.circular(5.0),
