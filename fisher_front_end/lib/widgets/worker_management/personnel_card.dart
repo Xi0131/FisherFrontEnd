@@ -22,6 +22,7 @@ class PersonnelCard extends StatelessWidget {
     return CupertinoButton(
       onPressed: onTap,
       child: Container(
+        width: 300,
         decoration: BoxDecoration(
           color: CupertinoColors.systemGrey6,
           borderRadius: BorderRadius.circular(20),
@@ -31,7 +32,7 @@ class PersonnelCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 300, //長方形大小
+              width: 110, //長方形大小
               height: 110, //圓形大小
               decoration: const BoxDecoration(
                 color: CupertinoColors.activeBlue,
@@ -42,7 +43,7 @@ class PersonnelCard extends StatelessWidget {
                       child: Image.file(
                         File(image), // 顯示本地圖片
                         fit: BoxFit.cover,
-                        width: 300,
+                        width: 110,
                         height: 110,
                       ),
                     )
