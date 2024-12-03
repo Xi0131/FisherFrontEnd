@@ -3,7 +3,7 @@ import 'dart:ui' as ui; // 為了使用 ui.Image，需要導入 dart:ui
 import 'signature_pad.dart'; // 確保導入 signature_pad.dart
 
 class CrewCalendar extends StatefulWidget {
-  const CrewCalendar({Key? key}) : super(key: key);
+  const CrewCalendar({super.key});
 
   @override
   State<CrewCalendar> createState() => _CrewCalendarState();
@@ -37,18 +37,21 @@ class _CrewCalendarState extends State<CrewCalendar> {
                   });
                 },
               ),
-              GestureDetector(
-                onTap: () => _showPicker(context),
+              CupertinoButton(
                 child: Row(
                   children: [
                     Text(
                       '$selectedYear年 ${_getMonthName(selectedMonth)}',
                       style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: CupertinoColors.black),
                     ),
+                    const SizedBox(width: 10),
                     const Icon(CupertinoIcons.chevron_down),
                   ],
                 ),
+                onPressed: () => _showPicker(context),
               ),
               CupertinoButton(
                 padding: EdgeInsets.zero,
@@ -74,14 +77,14 @@ class _CrewCalendarState extends State<CrewCalendar> {
             children: ['一', '二', '三', '四', '五', '六', '日']
                 .map(
                   (e) => Expanded(
-                child: Center(
-                  child: Text(
-                    e,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    child: Center(
+                      child: Text(
+                        e,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            )
+                )
                 .toList(),
           ),
         ),

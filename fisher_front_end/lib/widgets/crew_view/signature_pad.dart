@@ -4,10 +4,10 @@ import 'dart:ui' as ui;
 class SignaturePad extends StatefulWidget {
   final ValueChanged<ui.Image> onSignComplete;
 
-  const SignaturePad({Key? key, required this.onSignComplete}) : super(key: key);
+  const SignaturePad({super.key, required this.onSignComplete});
 
   @override
-  _SignaturePadState createState() => _SignaturePadState();
+  State<SignaturePad> createState() => _SignaturePadState();
 }
 
 class _SignaturePadState extends State<SignaturePad> {
@@ -24,7 +24,9 @@ class _SignaturePadState extends State<SignaturePad> {
           onPressed: () async {
             ui.Image image = await _renderSignatureToImage();
             widget.onSignComplete(image);
-            Navigator.pop(context);
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
           },
         ),
         leading: CupertinoButton(
@@ -78,7 +80,7 @@ class _SignaturePadState extends State<SignaturePad> {
     final canvas = Canvas(recorder);
 
     final signaturePainter = SignaturePainter(_points);
-    signaturePainter.paint(canvas, Size(400, 400));
+    signaturePainter.paint(canvas, const Size(400, 400));
 
     final picture = recorder.endRecording();
     final img = await picture.toImage(400, 400);
@@ -106,5 +108,6 @@ class SignaturePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(SignaturePainter oldDelegate) => oldDelegate.points != points;
+  bool shouldRepaint(SignaturePainter oldDelegate) =>
+      oldDelegate.points != points;
 }
