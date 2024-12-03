@@ -283,65 +283,33 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
                     ),
                     onPressed: () {
                       showCupertinoDialog(
-                        context: context,
-                        builder: (context) => Center(
-                          child: Container(
-                            width: 950, // 設定對話框寬度
-                            padding: const EdgeInsets.all(10), // 設置內邊距
-                            decoration: BoxDecoration(
-                              color: CupertinoColors.white,
-                              borderRadius: BorderRadius.circular(40), // 圓角設置
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min, // 垂直方向自適應內容
-                              children: [
-                                const Text(
-                                  "Are you sure?",
-                                  style: TextStyle(
-                                    fontSize: 50,
-                                    fontWeight: FontWeight.bold,
+                          context: context,
+                          builder: (context) => CupertinoAlertDialog(
+                                title: const Text('Are you sure?',
+                                    style: TextStyle(fontSize: 30)),
+                                content: const Text(
+                                    'Do you really want to delete this person?',
+                                    style: TextStyle(fontSize: 20)),
+                                actions: [
+                                  CupertinoDialogAction(
+                                    isDefaultAction: true,
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text('No',
+                                        style: TextStyle(fontSize: 20)),
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 20),
-                                const Text(
-                                  "Do you really want to delete this person?",
-                                  style: TextStyle(fontSize: 40),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 40),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    CupertinoButton(
-                                      color: CupertinoColors.systemGrey,
-                                      child: const Text(
-                                        "No",
-                                        style: TextStyle(fontSize: 35),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(context); // 關閉對話框
-                                      },
-                                    ),
-                                    CupertinoButton(
-                                      color: CupertinoColors.destructiveRed,
-                                      child: const Text(
-                                        "Yes",
-                                        style: TextStyle(fontSize: 35),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.pop(context); // 關閉對話框
-                                        widget.onDelete(); // 執行刪除邏輯
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
+                                  CupertinoDialogAction(
+                                    isDestructiveAction: true,
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      widget.onDelete(); // 執行刪除邏輯
+                                    },
+                                    child: const Text('Yes',
+                                        style: TextStyle(fontSize: 20)),
+                                  ),
+                                ],
+                              ));
                     },
                   ),
                 ],

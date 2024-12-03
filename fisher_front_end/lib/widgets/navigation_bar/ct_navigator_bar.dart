@@ -46,6 +46,7 @@ class _CTNavigatorBarState extends State<CTNavigatorBar> {
             isDestructiveAction: true,
             onPressed: () {
               Navigator.pop(context);
+              Navigator.pop(context);
             },
             child: const Text('Yes'),
           ),

@@ -36,7 +36,6 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const Text(
-                // SIGN IN
                 'SIGN IN',
                 style: TextStyle(
                   fontSize: 80,
@@ -172,7 +171,6 @@ class _LoginPageState extends State<LoginPage> {
                 child: CupertinoButton(
                   onPressed: () {
                     // 按下按鈕的行為
-                    //
                   },
                   child: const Text(
                     'LOGIN',
