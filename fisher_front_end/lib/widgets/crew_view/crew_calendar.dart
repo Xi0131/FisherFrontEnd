@@ -43,7 +43,9 @@ class _CrewCalendarState extends State<CrewCalendar> {
                     Text(
                       '$selectedYear年 ${_getMonthName(selectedMonth)}',
                       style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: CupertinoColors.black),
                     ),
                     const SizedBox(width: 10),
                     const Icon(CupertinoIcons.chevron_down),
