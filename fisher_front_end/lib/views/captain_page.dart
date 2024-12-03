@@ -211,13 +211,13 @@ class _CaptainPageState extends State<CaptainPage> {
             // show workers
             const SizedBox(height: 10),
             SizedBox(
-              height: 400,
-              width: 1500,
+              height: 300,
+              width: 1200,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
+                    crossAxisCount: 4,
                     mainAxisSpacing: 5, // Space between rows
                     crossAxisSpacing: 5, // Space between columns
                     childAspectRatio: 2, // Width / Height ratio
@@ -244,13 +244,13 @@ class _CaptainPageState extends State<CaptainPage> {
               color: CupertinoColors.systemGrey6,
               onPressed: onSaveInfo,
               child: const SizedBox(
-                height: 50,
-                width: 200,
+                height: 40,
+                width: 100,
                 child: Center(
                   child: Text(
                     'Save data',
                     style: TextStyle(
-                        fontSize: 30, color: CupertinoColors.activeBlue),
+                        fontSize: 20, color: CupertinoColors.activeBlue),
                   ),
                 ),
               ),
