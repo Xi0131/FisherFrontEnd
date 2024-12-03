@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'dart:ui' as ui; // 為了使用 ui.Image，需要導入 dart:ui
+import 'signature_pad.dart'; // 確保導入 signature_pad.dart
 
 class CrewCalendar extends StatefulWidget {
-  const CrewCalendar({super.key});
+  const CrewCalendar({Key? key}) : super(key: key);
 
   @override
   State<CrewCalendar> createState() => _CrewCalendarState();
@@ -40,11 +42,10 @@ class _CrewCalendarState extends State<CrewCalendar> {
                 child: Row(
                   children: [
                     Text(
-                      '$selectedYear ${_getMonthName(selectedMonth)}',
+                      '$selectedYear年 ${_getMonthName(selectedMonth)}',
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(width: 10),
                     const Icon(CupertinoIcons.chevron_down),
                   ],
                 ),
@@ -70,17 +71,17 @@ class _CrewCalendarState extends State<CrewCalendar> {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Row(
-            children: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            children: ['一', '二', '三', '四', '五', '六', '日']
                 .map(
                   (e) => Expanded(
-                    child: Center(
-                      child: Text(
-                        e,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                child: Center(
+                  child: Text(
+                    e,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                )
+                ),
+              ),
+            )
                 .toList(),
           ),
         ),
@@ -235,11 +236,13 @@ class _CrewCalendarState extends State<CrewCalendar> {
             const SizedBox(height: 10),
             const Text('顯示當天的詳細工作情況（時數）'),
             const SizedBox(height: 16),
-            // 簽名區域（這裡可以替換成實際的簽名元件）
-            Container(
-              height: 100,
-              color: CupertinoColors.systemGrey4,
-              child: const Center(child: Text('簽名區域')),
+            // 替換簽名區域為簽名按鈕
+            CupertinoButton(
+              child: const Text('點擊簽名'),
+              onPressed: () {
+                Navigator.pop(context); // 關閉當前對話框
+                _showSignaturePad(context, day);
+              },
             ),
           ],
         ),
@@ -248,14 +251,34 @@ class _CrewCalendarState extends State<CrewCalendar> {
             child: const Text('取消'),
             onPressed: () => Navigator.pop(context),
           ),
-          CupertinoDialogAction(
-            child: const Text('確認'),
-            onPressed: () {
-              // 在這裡處理簽名確認的邏輯
-              Navigator.pop(context);
-            },
-          ),
         ],
+      ),
+    );
+  }
+
+  void _showSignaturePad(BuildContext context, int day) {
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => SignaturePad(
+          onSignComplete: (ui.Image image) {
+            // 在這裡處理簽名圖片（例如，保存或顯示）
+            // 現在，我們只是顯示一個確認對話框
+            showCupertinoDialog(
+              context: context,
+              builder: (context) => CupertinoAlertDialog(
+                title: const Text('簽名已保存'),
+                content: const Text('您的簽名已成功保存。'),
+                actions: [
+                  CupertinoDialogAction(
+                    child: const Text('確定'),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -276,18 +299,18 @@ class _CrewCalendarState extends State<CrewCalendar> {
 
   String _getMonthName(int month) {
     const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
+      '一月',
+      '二月',
+      '三月',
+      '四月',
+      '五月',
+      '六月',
+      '七月',
+      '八月',
+      '九月',
+      '十月',
+      '十一月',
+      '十二月',
     ];
     return months[month - 1];
   }
