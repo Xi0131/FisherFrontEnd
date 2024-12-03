@@ -155,16 +155,6 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
                         ),
                 ),
               ),
-              // Container(
-              //   width: 200, // 藍色圈圈大小
-              //   height: 200, // 藍色圈圈大小
-              //   decoration: const BoxDecoration(
-              //     color: CupertinoColors.activeBlue,
-              //     shape: BoxShape.circle,
-              //   ),
-              //   child: const Icon(CupertinoIcons.person,
-              //       size: 100, color: CupertinoColors.white),//裡面的小人size
-              // ),
               const SizedBox(height: 20),
               // 之後都是輸入框
               _buildTextField(
@@ -259,19 +249,6 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
                       "OK",
                       style: TextStyle(fontSize: 24), // OK 按鈕文字大小
                     ),
-
-                    // onPressed: () {
-                    //   // 傳回更新的資料
-                    //   widget.onSave({
-                    //     "name": nameController.text,
-                    //     "number": numberController.text,
-                    //     "age": ageController.text,
-                    //     "passport": passportController.text,
-                    //     "country": countryController.text,
-                    //     "role": roleController.text,
-                    //   });
-                    //   Navigator.pop(context); // 返回主頁面
-                    // },
                   ),
 
                   // 刪除後確認是否要刪除
@@ -425,10 +402,6 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
                     .toList(),
               ),
             ),
-            // CupertinoButton(
-            //   child: const Text("Confirm"),
-            //   onPressed: () => Navigator.pop(context),
-            // ),
           ],
         ),
       ),
