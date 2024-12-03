@@ -27,6 +27,8 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
   late TextEditingController countryController;
   late TextEditingController roleController;
   late TextEditingController ageController;
+  late TextEditingController passwordController;
+  late TextEditingController confirmPasswordController;
 
   File? _image; // 用來存儲選擇的圖片
   // 當用戶選擇圖片時觸發此方法
@@ -54,6 +56,10 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
   bool isNameEmpty = false;
   bool isNumberEmpty = false;
   bool isNumberDuplicate = false; // 用於檢查編號是否重複
+  bool isPasswordEmpty = false;
+  bool isConfirmPasswordEmpty = false;
+  bool isPasswordDifferent = false;
+  bool _obscureText = true;  // 默認隱藏密碼
 
   @override
   void initState() {
@@ -65,6 +71,8 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
     countryController = TextEditingController(text: widget.person['country']);
     roleController = TextEditingController(text: widget.person['role']);
     ageController = TextEditingController(text: widget.person['age']);
+    passwordController = TextEditingController(text: widget.person['password']);
+    confirmPasswordController = TextEditingController(text: widget.person['confirmPassword']);
     // 初始化 selectedWorkType 為 person 資料中的工種（假設 'workType' 是 map 的一部分）
     selectedWorkType = widget.person['role'] ??
         "Select Work Type"; // 若 person 沒有 'workType'，則設為預設值
@@ -82,6 +90,8 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
     countryController.dispose();
     roleController.dispose();
     ageController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -90,12 +100,20 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
     setState(() {
       isNameEmpty = nameController.text.trim().isEmpty;
       isNumberEmpty = numberController.text.trim().isEmpty;
+      isPasswordEmpty = passwordController.text.trim().isEmpty;
+      isConfirmPasswordEmpty = passwordController.text.trim().isEmpty;
       isNumberDuplicate =
           widget.existingNumbers.contains(numberController.text.trim()) &&
               numberController.text.trim() != widget.person['number'];
+      if (passwordController.text != confirmPasswordController.text) {
+        isPasswordDifferent = true;
+      }else if(passwordController.text == confirmPasswordController.text){
+        isPasswordDifferent = false;
+      }
     });
     // 如果所有必填項都填寫，新增人員
-    if (!isNameEmpty && !isNumberEmpty && !isNumberDuplicate) {
+    if (!isNameEmpty && !isNumberEmpty && !isNumberDuplicate&& !isPasswordEmpty && !isConfirmPasswordEmpty
+        && !isPasswordDifferent) {
       Map<String, String> updatedPerson = {
         "name": nameController.text,
         "number": numberController.text,
@@ -103,6 +121,8 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
         "country": countryController.text,
         "age": ageController.text,
         "role": selectedWorkType,
+        "password": passwordController.text,
+        "confirmPassword": confirmPasswordController.text,
         "image": _image?.path ?? "", // 加入圖片路徑
       };
       widget.onSave(updatedPerson); // 調用保存回調
@@ -183,7 +203,24 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
                   placeholder: "Country", controller: countryController),
 
               const SizedBox(height: 10),
-
+              //輸入密碼
+              _buildTextField(
+                controller: passwordController,
+                placeholder: "Enter password",
+                isEmpty: isPasswordEmpty,
+                isDifferent: isPasswordDifferent,
+                isPassword: true,
+              ),
+              const SizedBox(height: 10),
+              //確認密碼
+              _buildTextField(
+                controller: confirmPasswordController,
+                placeholder: "Confirm password",
+                isEmpty: isConfirmPasswordEmpty,
+                isDifferent: isPasswordDifferent,
+                isPassword: true,  // 標記這是密碼輸入框
+              ),
+              const SizedBox(height: 10),
               CupertinoButton(
                 padding: EdgeInsets.zero, // 去除內邊距
                 onPressed: () => _showWorkTypePicker(context),
@@ -304,6 +341,8 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
     required String placeholder,
     bool isEmpty = false,
     bool isDuplicate = false,
+    bool isDifferent = false,
+    bool isPassword = false, //確認是否為密碼輸入格
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,6 +350,7 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
         CupertinoTextField(
           placeholder: placeholder,
           controller: controller,
+          obscureText: isPassword ? _obscureText : false, // 只有密碼框隱藏文本
           padding: const EdgeInsets.only(top: 30, bottom: 30, left: 10),
           style: const TextStyle(
             fontSize: 24,
@@ -319,7 +359,7 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isEmpty || isDuplicate
+              color: isEmpty || isDuplicate || isDifferent
                   ? CupertinoColors.destructiveRed // 如果為空或重複，顯示紅色邊框
                   : CupertinoColors.lightBackgroundGray, // 否則顯示灰色邊框
               width: 2,
@@ -336,12 +376,41 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
               ),
             ),
           ),
+          suffix: isPassword
+              ? CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText; // 切換顯示/隱藏密碼
+              });
+            },
+            child: Icon(
+              _obscureText
+                  ? CupertinoIcons.eye_slash  // 如果密碼隱藏，顯示眼睛被遮擋的圖標
+                  : CupertinoIcons.eye, // 如果密碼顯示，顯示普通眼睛圖標
+              color: CupertinoColors.inactiveGray,
+            ),
+          )
+              : null, // 不是密碼框則不顯示這個按鈕
         ),
         if (isDuplicate) // 如果重複編號，提示錯誤
           const Padding(
             padding: EdgeInsets.only(left: 10, top: 5),
             child: Text(
               "This number is already in use.", // 错误提示
+              style: TextStyle(
+                color: CupertinoColors.destructiveRed,
+                fontSize: 16,
+              ),
+            ),
+          ),
+
+        // 根據密碼是否一致來顯示錯誤訊息
+        if (isDifferent)
+          const Padding(
+            padding: EdgeInsets.only(left: 10, top: 5),
+            child: Text(
+              'Passwords do not match',
               style: TextStyle(
                 color: CupertinoColors.destructiveRed,
                 fontSize: 16,
