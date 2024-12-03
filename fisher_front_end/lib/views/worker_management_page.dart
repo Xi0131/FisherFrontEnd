@@ -53,7 +53,7 @@ class _WorkerManagementPageState extends State<WorkerManagementPage> {
         children: [
           // 頂部分類按鈕
           Padding(
-            padding: const EdgeInsets.only(top: 50, bottom: 5),
+            padding: const EdgeInsets.only(top: 80, bottom: 5),
             child: SizedBox(
               height: 60,
               child: Row(
