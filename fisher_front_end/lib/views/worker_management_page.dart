@@ -88,7 +88,7 @@ class _WorkerManagementPageState extends State<WorkerManagementPage> {
                                 color: isSelected
                                     ? CupertinoColors.white
                                     : CupertinoColors.black,
-                                fontSize: 20,
+                                fontSize: 25,
                               ),
                             ),
                           ),
