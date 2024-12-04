@@ -171,6 +171,11 @@ class _LoginPageState extends State<LoginPage> {
                 child: CupertinoButton(
                   onPressed: () {
                     // 按下按鈕的行為
+                    if (selectedRole == 'Captain') {
+                      Navigator.pushNamed(context, 'captainPage');
+                    } else {
+                      Navigator.pushNamed(context, 'crewPage');
+                    }
                   },
                   child: const Text(
                     'LOGIN',
