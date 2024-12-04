@@ -59,7 +59,7 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
   bool isPasswordEmpty = false;
   bool isConfirmPasswordEmpty = false;
   bool isPasswordDifferent = false;
-  bool _obscureText = true;  // 默認隱藏密碼
+  bool _obscureText = true; // 默認隱藏密碼
 
   @override
   void initState() {
@@ -71,8 +71,8 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
     countryController = TextEditingController(text: widget.person['country']);
     roleController = TextEditingController(text: widget.person['role']);
     ageController = TextEditingController(text: widget.person['age']);
-    passwordController = TextEditingController(text: widget.person['password']);
-    confirmPasswordController = TextEditingController(text: widget.person['confirmPassword']);
+    passwordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
     // 初始化 selectedWorkType 為 person 資料中的工種（假設 'workType' 是 map 的一部分）
     selectedWorkType = widget.person['role'] ??
         "Select Work Type"; // 若 person 沒有 'workType'，則設為預設值
@@ -107,13 +107,17 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
               numberController.text.trim() != widget.person['number'];
       if (passwordController.text != confirmPasswordController.text) {
         isPasswordDifferent = true;
-      }else if(passwordController.text == confirmPasswordController.text){
+      } else if (passwordController.text == confirmPasswordController.text) {
         isPasswordDifferent = false;
       }
     });
     // 如果所有必填項都填寫，新增人員
-    if (!isNameEmpty && !isNumberEmpty && !isNumberDuplicate&& !isPasswordEmpty && !isConfirmPasswordEmpty
-        && !isPasswordDifferent) {
+    if (!isNameEmpty &&
+        !isNumberEmpty &&
+        !isNumberDuplicate &&
+        !isPasswordEmpty &&
+        !isConfirmPasswordEmpty &&
+        !isPasswordDifferent) {
       Map<String, String> updatedPerson = {
         "name": nameController.text,
         "number": numberController.text,
@@ -218,7 +222,7 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
                 placeholder: "Confirm password",
                 isEmpty: isConfirmPasswordEmpty,
                 isDifferent: isPasswordDifferent,
-                isPassword: true,  // 標記這是密碼輸入框
+                isPassword: true, // 標記這是密碼輸入框
               ),
               const SizedBox(height: 10),
               CupertinoButton(
@@ -378,19 +382,19 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
           ),
           suffix: isPassword
               ? CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {
-              setState(() {
-                _obscureText = !_obscureText; // 切換顯示/隱藏密碼
-              });
-            },
-            child: Icon(
-              _obscureText
-                  ? CupertinoIcons.eye_slash  // 如果密碼隱藏，顯示眼睛被遮擋的圖標
-                  : CupertinoIcons.eye, // 如果密碼顯示，顯示普通眼睛圖標
-              color: CupertinoColors.inactiveGray,
-            ),
-          )
+                  padding: EdgeInsets.zero,
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText; // 切換顯示/隱藏密碼
+                    });
+                  },
+                  child: Icon(
+                    _obscureText
+                        ? CupertinoIcons.eye_slash // 如果密碼隱藏，顯示眼睛被遮擋的圖標
+                        : CupertinoIcons.eye, // 如果密碼顯示，顯示普通眼睛圖標
+                    color: CupertinoColors.inactiveGray,
+                  ),
+                )
               : null, // 不是密碼框則不顯示這個按鈕
         ),
         if (isDuplicate) // 如果重複編號，提示錯誤
