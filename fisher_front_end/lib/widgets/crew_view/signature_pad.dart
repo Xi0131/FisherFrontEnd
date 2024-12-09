@@ -11,7 +11,9 @@ class SignaturePad extends StatefulWidget {
 }
 
 class _SignaturePadState extends State<SignaturePad> {
-  List<Offset?> _points = [];
+  final List<List<Offset>> _strokes = [];
+  List<Offset> _currentStroke = [];
+  Size? _canvasSize;
 
   @override
   Widget build(BuildContext context) {
@@ -21,55 +23,91 @@ class _SignaturePadState extends State<SignaturePad> {
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           child: const Text('確認'),
-          onPressed: () async {
-            ui.Image image = await _renderSignatureToImage();
-            widget.onSignComplete(image);
-            if (context.mounted) {
-              Navigator.pop(context);
+          onPressed: _strokes.isNotEmpty ? () async {
+            try {
+              // 預留處理簽名圖片的邏輯空間
+              print('生成簽名圖片，未來可在此處理圖片轉換或儲存邏輯');
+
+              // 返回上一頁
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                print('沒有頁面可以返回');
+              }
+            } catch (e) {
+              print('按下確認鍵時發生錯誤: $e');
             }
-          },
+          } : null, // 若無簽名內容，按鈕禁用
         ),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: const Text('取消'),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              print('沒有頁面可以返回');
+            }
+          },
         ),
       ),
       child: SafeArea(
-        child: Stack(
-          children: [
-            GestureDetector(
-              onPanUpdate: (DragUpdateDetails details) {
-                RenderBox box = context.findRenderObject() as RenderBox;
-                Offset point = box.globalToLocal(details.globalPosition);
-                setState(() {
-                  _points = List.from(_points)..add(point);
-                });
-              },
-              onPanEnd: (DragEndDetails details) {
-                setState(() {
-                  _points.add(null); // 使用 null 來分隔不同的筆畫
-                });
-              },
-              child: CustomPaint(
-                painter: SignaturePainter(_points),
-                size: Size.infinite,
-              ),
-            ),
-            Positioned(
-              bottom: 16,
-              left: 16,
-              child: CupertinoButton(
-                color: CupertinoColors.systemGrey4,
-                child: const Text('清除'),
-                onPressed: () {
-                  setState(() {
-                    _points.clear();
-                  });
-                },
-              ),
-            ),
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            _canvasSize = Size(constraints.maxWidth, constraints.maxHeight);
+            return Stack(
+              children: [
+                GestureDetector(
+                  onPanDown: (DragDownDetails details) {
+                    final RenderBox box = context.findRenderObject() as RenderBox;
+                    final Offset localPosition = box.globalToLocal(details.globalPosition);
+                    setState(() {
+                      _currentStroke = [localPosition];
+                    });
+                  },
+                  onPanUpdate: (DragUpdateDetails details) {
+                    final RenderBox box = context.findRenderObject() as RenderBox;
+                    final Offset localPosition = box.globalToLocal(details.globalPosition);
+                    setState(() {
+                      _currentStroke.add(localPosition);
+                    });
+                  },
+                  onPanEnd: (DragEndDetails details) {
+                    setState(() {
+                      if (_currentStroke.isNotEmpty) {
+                        _strokes.add(List.from(_currentStroke));
+                        _currentStroke.clear();
+                      }
+                    });
+                  },
+                  child: CustomPaint(
+                    painter: SignaturePainter(
+                      strokes: _strokes,
+                      currentStroke: _currentStroke,
+                    ),
+                    size: Size.infinite,
+                  ),
+                ),
+                Positioned(
+                  bottom: 16,
+                  left: 16,
+                  child: Container(
+                    color: CupertinoColors.white.withOpacity(0.7),
+                    child: CupertinoButton(
+                      color: CupertinoColors.systemGrey4,
+                      child: const Text('清除'),
+                      onPressed: () {
+                        setState(() {
+                          _strokes.clear();
+                          _currentStroke.clear();
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -78,20 +116,28 @@ class _SignaturePadState extends State<SignaturePad> {
   Future<ui.Image> _renderSignatureToImage() async {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
+    final signaturePainter = SignaturePainter(
+      strokes: _strokes,
+      currentStroke: _currentStroke,
+    );
 
-    final signaturePainter = SignaturePainter(_points);
-    signaturePainter.paint(canvas, const Size(400, 400));
+    final size = _canvasSize ?? const Size(400, 400);
+    signaturePainter.paint(canvas, size);
 
     final picture = recorder.endRecording();
-    final img = await picture.toImage(400, 400);
+    final img = await picture.toImage(size.width.toInt(), size.height.toInt());
     return img;
   }
 }
 
 class SignaturePainter extends CustomPainter {
-  final List<Offset?> points;
+  final List<List<Offset>> strokes;
+  final List<Offset> currentStroke;
 
-  SignaturePainter(this.points);
+  SignaturePainter({
+    required this.strokes,
+    required this.currentStroke,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -100,14 +146,23 @@ class SignaturePainter extends CustomPainter {
       ..strokeWidth = 2.0
       ..strokeCap = StrokeCap.round;
 
-    for (int i = 0; i < points.length - 1; i++) {
-      if (points[i] != null && points[i + 1] != null) {
-        canvas.drawLine(points[i]!, points[i + 1]!, paint);
+    // 繪製已完成的筆畫
+    for (var stroke in strokes) {
+      if (stroke.length > 1) {
+        for (int i = 0; i < stroke.length - 1; i++) {
+          canvas.drawLine(stroke[i], stroke[i + 1], paint);
+        }
+      }
+    }
+
+    // 繪製當前正在繪製的筆畫
+    if (currentStroke.length > 1) {
+      for (int i = 0; i < currentStroke.length - 1; i++) {
+        canvas.drawLine(currentStroke[i], currentStroke[i + 1], paint);
       }
     }
   }
 
   @override
-  bool shouldRepaint(SignaturePainter oldDelegate) =>
-      oldDelegate.points != points;
+  bool shouldRepaint(SignaturePainter oldDelegate) => true;
 }
