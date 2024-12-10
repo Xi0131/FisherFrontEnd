@@ -22,22 +22,24 @@ class _SignaturePadState extends State<SignaturePad> {
         middle: const Text('簽名'),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: const Text('確認'),
-          onPressed: _strokes.isNotEmpty ? () async {
-            try {
-              // 預留處理簽名圖片的邏輯空間
-              print('生成簽名圖片，未來可在此處理圖片轉換或儲存邏輯');
+          onPressed: _strokes.isNotEmpty
+              ? () async {
+                  try {
+                    // 預留處理簽名圖片的邏輯空間
+                    debugPrint('生成簽名圖片，未來可在此處理圖片轉換或儲存邏輯');
 
-              // 返回上一頁
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              } else {
-                print('沒有頁面可以返回');
-              }
-            } catch (e) {
-              print('按下確認鍵時發生錯誤: $e');
-            }
-          } : null, // 若無簽名內容，按鈕禁用
+                    // 返回上一頁
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      debugPrint('沒有頁面可以返回');
+                    }
+                  } catch (e) {
+                    debugPrint('按下確認鍵時發生錯誤: $e');
+                  }
+                }
+              : null,
+          child: const Text('確認'), // 若無簽名內容，按鈕禁用
         ),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
@@ -46,7 +48,7 @@ class _SignaturePadState extends State<SignaturePad> {
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
             } else {
-              print('沒有頁面可以返回');
+              debugPrint('沒有頁面可以返回');
             }
           },
         ),
@@ -59,15 +61,19 @@ class _SignaturePadState extends State<SignaturePad> {
               children: [
                 GestureDetector(
                   onPanDown: (DragDownDetails details) {
-                    final RenderBox box = context.findRenderObject() as RenderBox;
-                    final Offset localPosition = box.globalToLocal(details.globalPosition);
+                    final RenderBox box =
+                        context.findRenderObject() as RenderBox;
+                    final Offset localPosition =
+                        box.globalToLocal(details.globalPosition);
                     setState(() {
                       _currentStroke = [localPosition];
                     });
                   },
                   onPanUpdate: (DragUpdateDetails details) {
-                    final RenderBox box = context.findRenderObject() as RenderBox;
-                    final Offset localPosition = box.globalToLocal(details.globalPosition);
+                    final RenderBox box =
+                        context.findRenderObject() as RenderBox;
+                    final Offset localPosition =
+                        box.globalToLocal(details.globalPosition);
                     setState(() {
                       _currentStroke.add(localPosition);
                     });
