@@ -1,8 +1,6 @@
 import 'package:fisher_front_end/widgets/worker_management/add_new_button.dart';
 import 'package:fisher_front_end/widgets/worker_management/personnel_card.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:fisher_front_end/views/edit_personnel_page.dart'; //導入 EditPersonnelPage
-import 'add_people.dart';
 
 class WorkerManagementPage extends StatefulWidget {
   const WorkerManagementPage({super.key});
@@ -116,21 +114,16 @@ class _WorkerManagementPageState extends State<WorkerManagementPage> {
                 if (index == filteredPersonnel.length) {
                   //如果按了新增按鈕
                   return AddNewButton(onTap: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => AddPersonnelPage(
-                          onAdd: (newPerson) {
-                            setState(() {
-                              personnel.add(newPerson); // 新增人員
-                            });
+                    Navigator.pushNamed(context, 'addPersonnelPage',
+                        arguments: {
+                          'onAdd': (newPerson) {
+                            setState(() => personnel.add(newPerson) // 新增人員
+                                );
                           },
-                          existingNumbers: personnel
+                          'existingNumbers': personnel
                               .map((person) => person['number']!)
                               .toList(),
-                        ),
-                      ),
-                    );
+                        });
                   });
                 }
 
@@ -142,30 +135,25 @@ class _WorkerManagementPageState extends State<WorkerManagementPage> {
                   number: person["number"]!,
                   image: person["image"] ?? '',
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => EditPersonnelPage(
-                          person: Map<String, String>.from(
+                    Navigator.pushNamed(context, 'editPersonnelPage',
+                        arguments: {
+                          'person': Map<String, String>.from(
                               personnel[originalIndex]), // 使用原始數據
-                          onDelete: () {
-                            setState(() {
-                              personnel.removeAt(originalIndex); // 刪除原始數據
-                            });
+                          'onDelete': () {
+                            setState(() =>
+                                    personnel.removeAt(originalIndex) // 刪除原始數據
+                                );
                             Navigator.pop(context);
                           },
-                          onSave: (updatedPerson) {
-                            setState(() {
-                              personnel[originalIndex] =
-                                  updatedPerson; // 更新原始數據
-                            });
+                          'onSave': (updatedPerson) {
+                            setState(() => personnel[originalIndex] =
+                                    updatedPerson // 更新原始數據
+                                );
                           },
-                          existingNumbers: personnel
+                          'existingNumbers': personnel
                               .map((person) => person['number']!)
                               .toList(),
-                        ),
-                      ),
-                    );
+                        });
                   },
                 );
               },

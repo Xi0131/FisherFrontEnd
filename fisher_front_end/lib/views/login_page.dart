@@ -97,11 +97,6 @@ class _LoginPageState extends State<LoginPage> {
                         selectedRole = 'Worker';
                       });
                     },
-                    //onTap: () {
-                    //setState(() {
-                    //selectedRole = 'Crew';
-                    //});
-                    //},
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         vertical: 15,

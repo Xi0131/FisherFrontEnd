@@ -47,6 +47,12 @@ class _CTNavigatorBarState extends State<CTNavigatorBar> {
             onPressed: () {
               Navigator.pop(context);
               Navigator.pop(context);
+              // debugPrint(RouteSettings);
+              // Navigator.pop(context);
+              // Navigator.pushNamedAndRemoveUntil(
+              //     context, 'loginPage', (route) => false);
+              // Navigator.pushNamed(context, 'loginPage');
+              // Navigator.push(context, CupertinoPageRoute(builder: LoginPage()));
             },
             child: const Text('Yes'),
           ),
