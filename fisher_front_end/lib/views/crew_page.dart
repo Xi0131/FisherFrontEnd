@@ -10,6 +10,10 @@ class CrewPage extends StatefulWidget {
 }
 
 class _CrewPageState extends State<CrewPage> {
+  void logout(BuildContext context) {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -22,6 +26,7 @@ class _CrewPageState extends State<CrewPage> {
           onPressed: () {
             // 彈出確認登出對話框
             showCupertinoDialog(
+              useRootNavigator: false,
               context: context,
               builder: (context) => CupertinoAlertDialog(
                 title: const Text('登出'),
@@ -32,11 +37,11 @@ class _CrewPageState extends State<CrewPage> {
                     onPressed: () => Navigator.pop(context),
                   ),
                   CupertinoDialogAction(
+                    isDestructiveAction: true,
                     child: const Text('確定'),
                     onPressed: () {
-                      Navigator.pop(context); // 關閉對話框
                       // 執行登出操作，例如導航到登入頁面
-                      // Navigator.pushReplacementNamed(context, 'loginPage');
+                      Navigator.pop(context); // 關閉對話框
                       Navigator.pop(context); // 返回上一頁
                     },
                   ),

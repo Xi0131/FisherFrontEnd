@@ -29,10 +29,8 @@ class CTNavList extends StatelessWidget {
                 color: CupertinoColors.activeGreen,
               ),
               trailing: const Icon(CupertinoIcons.right_chevron),
-              // should be modify one combine with login page
               onTap: () {
-                // Navigator.popUntil(context, ModalRoute.withName('loginPage'));
-                Navigator.pushNamed(context, 'captainPage');
+                Navigator.pop(context);
               },
             ),
             CupertinoListTile.notched(
@@ -44,7 +42,6 @@ class CTNavList extends StatelessWidget {
               ),
               trailing: const Icon(CupertinoIcons.right_chevron),
               onTap: () {
-                // Navigator.popUntil(context, ModalRoute.withName('loginPage'));
                 Navigator.pushNamed(context, 'workerManagementPage');
               },
             ),

@@ -29,6 +29,7 @@ class _CTNavigatorBarState extends State<CTNavigatorBar> {
 
   void _showDialog(BuildContext context) {
     showCupertinoDialog(
+      useRootNavigator: false,
       barrierDismissible: true,
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
@@ -45,14 +46,8 @@ class _CTNavigatorBarState extends State<CTNavigatorBar> {
           CupertinoDialogAction(
             isDestructiveAction: true,
             onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-              // debugPrint(RouteSettings);
-              // Navigator.pop(context);
-              // Navigator.pushNamedAndRemoveUntil(
-              //     context, 'loginPage', (route) => false);
-              // Navigator.pushNamed(context, 'loginPage');
-              // Navigator.push(context, CupertinoPageRoute(builder: LoginPage()));
+              Navigator.pop(context); // close dialog
+              Navigator.pop(context); // navigate to ct page
             },
             child: const Text('Yes'),
           ),
