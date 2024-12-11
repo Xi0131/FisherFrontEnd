@@ -74,18 +74,11 @@ class _CrewCalendarState extends State<CrewCalendar> {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Row(
-            children: ['一', '二', '三', '四', '五', '六', '日']
-                .map(
-                  (e) => Expanded(
-                    child: Center(
-                      child: Text(
-                        e,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                )
-                .toList(),
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              for (var e in ['一', '二', '三', '四', '五', '六', '日'])
+                Text(e, style: const TextStyle(fontWeight: FontWeight.bold)),
+            ],
           ),
         ),
         // 月曆網格
