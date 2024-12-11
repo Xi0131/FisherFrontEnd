@@ -9,7 +9,6 @@ import 'package:fisher_front_end/widgets/navigation_bar/ct_nav_list.dart';
 import 'package:flutter/cupertino.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
-  debugPrint(settings.name);
   switch (settings.name) {
     case 'captainPage':
       return CupertinoPageRoute(builder: (context) => const CaptainPage());
@@ -30,7 +29,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       return CupertinoPageRoute(
         builder: (context) => AddPersonnelPage(
           onAdd: args['onAdd'],
-          existingNumbers: args['existingNumbers'], // Pass existing numbers
+          existingNumbers: args['existingNumbers'],
         ),
       );
     case 'editPersonnelPage':
