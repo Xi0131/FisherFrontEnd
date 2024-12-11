@@ -1,3 +1,4 @@
+import 'package:fisher_front_end/widgets/crew_view/signature_painter.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui;
 
@@ -27,7 +28,7 @@ class _SignaturePadState extends State<SignaturePad> {
                   try {
                     // 預留處理簽名圖片的邏輯空間
                     debugPrint('生成簽名圖片，未來可在此處理圖片轉換或儲存邏輯');
-
+                    _renderSignatureToImage();
                     // 返回上一頁
                     if (Navigator.canPop(context)) {
                       Navigator.pop(context);
@@ -134,41 +135,4 @@ class _SignaturePadState extends State<SignaturePad> {
     final img = await picture.toImage(size.width.toInt(), size.height.toInt());
     return img;
   }
-}
-
-class SignaturePainter extends CustomPainter {
-  final List<List<Offset>> strokes;
-  final List<Offset> currentStroke;
-
-  SignaturePainter({
-    required this.strokes,
-    required this.currentStroke,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = CupertinoColors.black
-      ..strokeWidth = 2.0
-      ..strokeCap = StrokeCap.round;
-
-    // 繪製已完成的筆畫
-    for (var stroke in strokes) {
-      if (stroke.length > 1) {
-        for (int i = 0; i < stroke.length - 1; i++) {
-          canvas.drawLine(stroke[i], stroke[i + 1], paint);
-        }
-      }
-    }
-
-    // 繪製當前正在繪製的筆畫
-    if (currentStroke.length > 1) {
-      for (int i = 0; i < currentStroke.length - 1; i++) {
-        canvas.drawLine(currentStroke[i], currentStroke[i + 1], paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(SignaturePainter oldDelegate) => true;
 }
