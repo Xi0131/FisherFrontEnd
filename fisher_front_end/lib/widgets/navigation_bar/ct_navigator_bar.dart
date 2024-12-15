@@ -1,4 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'dart:convert'; // For JSON decoding
+import 'package:http/http.dart' as http;
 
 class CTNavigatorBar extends StatefulWidget
     implements ObstructingPreferredSizeWidget {
@@ -19,6 +21,7 @@ class CTNavigatorBar extends StatefulWidget
 
 class _CTNavigatorBarState extends State<CTNavigatorBar> {
   bool _hasNotification = false;
+  int notificationCount = 0;
   // State to control the red dot visibility
 
   void _toggleNotification() {
@@ -56,14 +59,38 @@ class _CTNavigatorBarState extends State<CTNavigatorBar> {
     );
   }
 
-  void _getNotificationStatus() {
-    // call api to get notification status
-    // should be call when first login to working hour management page
-    // should be call after every save
+  // call api to get notification status
+  // should be call when first login to working hour management page
+  // should be call after every save
+  Future<void> _checkNotificationState() async {
+    try {
+      String url =
+          'http://35.229.208.250:3000/api/CTManagementPage/notification-count';
+      // Send the GET request
+      final response = await http.get(Uri.parse(url));
+
+      // Check if the response status code indicates success
+      if (response.statusCode == 200) {
+        // Decode and handle the JSON response
+        setState(() {
+          notificationCount = jsonDecode(response.body)['notifications'];
+          if (notificationCount > 0) {
+            _hasNotification = true;
+          } else {
+            _hasNotification = false;
+          }
+        });
+      } else {
+        debugPrint('Request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error occurred: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    _checkNotificationState();
     return CupertinoNavigationBar(
         leading: CupertinoButton(
           padding: const EdgeInsets.all(0),

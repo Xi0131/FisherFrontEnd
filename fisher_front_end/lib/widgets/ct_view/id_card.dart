@@ -22,10 +22,10 @@ class IdCard extends StatefulWidget {
 
 class _IdCardState extends State<IdCard> {
   bool _isHighlighted = false;
+  bool _isRecorded = false;
   Image _workerHeadImage = Image.asset('default.png');
   late String _workerName;
   late String _workerType;
-  late bool _isRecorded;
 
   @override
   void initState() {
@@ -34,6 +34,17 @@ class _IdCardState extends State<IdCard> {
     _workerType = widget.workerType;
     _isRecorded = widget.isRecorded;
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant IdCard oldWidget) {
+    if (_isRecorded != widget.isRecorded) {
+      setState(() {
+        _isRecorded = widget.isRecorded;
+        _isHighlighted = false;
+      });
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   void _toggleHighlight() {
