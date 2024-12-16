@@ -17,11 +17,14 @@ class _LoginPageState extends State<LoginPage> {
 
   // 登錄按鈕邏輯
   Future<void> _login() async {
-    final String username = usernameController.text;
-    final String password = passwordController.text;
+    final String username = usernameController.text.trim();
+    final String password = passwordController.text.trim();
 
-    // API 請求設定
-    final url = Uri.parse('http://35.229.208.250:3000/api/loginPage/login');
+    // 根據選擇的角色切換 API URL
+    final String endpoint = selectedRole == 'Captain'
+        ? 'http://35.229.208.250:3000/api/loginPage/captainLogin'
+        : 'http://35.229.208.250:3000/api/loginPage/workerLogin';
+
     final body = jsonEncode({
       'username': username,
       'pattern': password,
@@ -29,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
 
     try {
       final response = await http.post(
-        url,
+        Uri.parse(endpoint),
         headers: {'Content-Type': 'application/json'},
         body: body,
       );
@@ -37,20 +40,16 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return; // 確保 Widget 仍然存在
 
       if (response.statusCode == 200) {
-        // final result = jsonDecode(response.body);
-        // print('Login Success: $result');
-        // 成功登入後導航至對應頁面
-        if (selectedRole == 'Captain') {
-          Navigator.pushNamed(context, 'captainPage');
-        } else {
-          Navigator.pushNamed(context, 'crewPage');
-        }
+        // 登錄成功邏輯
+        Navigator.pushNamed(
+          context,
+          selectedRole == 'Captain' ? 'captainPage' : 'crewPage',
+        );
       } else {
         _showErrorDialog('Invalid username or password.');
       }
     } catch (e) {
-      if (!mounted) return; // 再次檢查 Widget 是否存在
-      // print('Error: $e');
+      if (!mounted) return;
       _showErrorDialog('An error occurred. Please try again.');
     }
   }
@@ -193,8 +192,7 @@ class _LoginPageState extends State<LoginPage> {
       child: CupertinoTextField(
         controller: controller,
         placeholder: placeholder,
-        padding:
-        const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
         obscureText: obscureText,
         decoration: BoxDecoration(
           color: CupertinoColors.lightBackgroundGray,
