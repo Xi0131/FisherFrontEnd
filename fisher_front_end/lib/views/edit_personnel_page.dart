@@ -56,10 +56,13 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
   bool isNameEmpty = false;
   bool isNumberEmpty = false;
   bool isNumberDuplicate = false; // 用於檢查編號是否重複
-  bool isPasswordEmpty = false;
-  bool isConfirmPasswordEmpty = false;
+  // bool isPasswordEmpty = false;
+  // bool isConfirmPasswordEmpty = false;
   bool isPasswordDifferent = false;
   bool _obscureText = true; // 默認隱藏密碼
+  bool isAgeEmpty = false;
+  bool isCountryEmpty = false;
+  bool isPassportEmpty = false;
 
   @override
   void initState() {
@@ -100,8 +103,12 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
     setState(() {
       isNameEmpty = nameController.text.trim().isEmpty;
       isNumberEmpty = numberController.text.trim().isEmpty;
-      isPasswordEmpty = passwordController.text.trim().isEmpty;
-      isConfirmPasswordEmpty = passwordController.text.trim().isEmpty;
+      // isPasswordEmpty = passwordController.text.trim().isEmpty;
+      // isConfirmPasswordEmpty = passwordController.text.trim().isEmpty;
+      isAgeEmpty = ageController.text.trim().isEmpty;
+      isPassportEmpty = passportController.text.trim().isEmpty;
+      isCountryEmpty = countryController.text.trim().isEmpty;
+
       isNumberDuplicate =
           widget.existingNumbers.contains(numberController.text.trim()) &&
               numberController.text.trim() != widget.person['number'];
@@ -115,9 +122,7 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
     if (!isNameEmpty &&
         !isNumberEmpty &&
         !isNumberDuplicate &&
-        !isPasswordEmpty &&
-        !isConfirmPasswordEmpty &&
-        !isPasswordDifferent) {
+        !isPasswordDifferent && !isAgeEmpty && !isCountryEmpty && !isPassportEmpty) {
       Map<String, String> updatedPerson = {
         "name": nameController.text,
         "number": numberController.text,
@@ -125,7 +130,9 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
         "country": countryController.text,
         "age": ageController.text,
         "role": selectedWorkType,
-        "password": passwordController.text,
+        "password": passwordController.text.isEmpty
+            ? widget.person['password'] ?? "" // 如果密碼框是空的，保持原來的密碼
+            : passwordController.text, // 否則更新為新密碼
         "confirmPassword": confirmPasswordController.text,
         "image": _image?.path ?? "", // 加入圖片路徑
       };
@@ -195,35 +202,56 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
               ),
               //age
               const SizedBox(height: 10),
-              _buildCupertinoTextField(
-                  placeholder: "Age", controller: ageController),
+              _buildTextField(
+                controller: ageController,
+                placeholder: "Age",
+                isEmpty: isAgeEmpty,
+              ),
 
               const SizedBox(height: 10),
-              _buildCupertinoTextField(
-                  placeholder: "Passport", controller: passportController),
+              _buildTextField(
+                controller: passportController,
+                placeholder: "Passport",
+                isEmpty: isPassportEmpty,
+              ),
 
               const SizedBox(height: 10),
-              _buildCupertinoTextField(
-                  placeholder: "Country", controller: countryController),
+              _buildTextField(
+                controller: countryController,
+                placeholder: "Country",
+                isEmpty: isCountryEmpty,
+              ),
 
               const SizedBox(height: 10),
               //輸入密碼
-              _buildTextField(
+              _buildPasswordField(
                 controller: passwordController,
                 placeholder: "Enter password",
-                isEmpty: isPasswordEmpty,
+                // isEmpty: isPasswordEmpty,
                 isDifferent: isPasswordDifferent,
-                isPassword: true,
               ),
+              // _buildTextField(
+              //   controller: passwordController,
+              //   placeholder: "Enter password",
+              //   // isEmpty: isPasswordEmpty,
+              //   isDifferent: isPasswordDifferent,
+              //   isPassword: true,
+              // ),
               const SizedBox(height: 10),
               //確認密碼
-              _buildTextField(
+              _buildPasswordField(
                 controller: confirmPasswordController,
                 placeholder: "Confirm password",
-                isEmpty: isConfirmPasswordEmpty,
+                // isEmpty: isConfirmPasswordEmpty,
                 isDifferent: isPasswordDifferent,
-                isPassword: true, // 標記這是密碼輸入框
               ),
+              // _buildTextField(
+              //   controller: confirmPasswordController,
+              //   placeholder: "Confirm password",
+              //   // isEmpty: isConfirmPasswordEmpty,
+              //   isDifferent: isPasswordDifferent,
+              //   isPassword: true, // 標記這是密碼輸入框
+              // ),
               const SizedBox(height: 10),
               CupertinoButton(
                 padding: EdgeInsets.zero, // 去除內邊距
@@ -345,8 +373,8 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
     required String placeholder,
     bool isEmpty = false,
     bool isDuplicate = false,
-    bool isDifferent = false,
-    bool isPassword = false, //確認是否為密碼輸入格
+    // bool isDifferent = false,
+    // bool isPassword = false, //確認是否為密碼輸入格
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -354,7 +382,7 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
         CupertinoTextField(
           placeholder: placeholder,
           controller: controller,
-          obscureText: isPassword ? _obscureText : false, // 只有密碼框隱藏文本
+          // obscureText: isPassword ? _obscureText : false, // 只有密碼框隱藏文本
           padding: const EdgeInsets.only(top: 30, bottom: 30, left: 10),
           style: const TextStyle(
             fontSize: 24,
@@ -363,7 +391,7 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isEmpty || isDuplicate || isDifferent
+              color: isEmpty || isDuplicate
                   ? CupertinoColors.destructiveRed // 如果為空或重複，顯示紅色邊框
                   : CupertinoColors.lightBackgroundGray, // 否則顯示灰色邊框
               width: 2,
@@ -380,22 +408,22 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
               ),
             ),
           ),
-          suffix: isPassword
-              ? CupertinoButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {
-                    setState(() {
-                      _obscureText = !_obscureText; // 切換顯示/隱藏密碼
-                    });
-                  },
-                  child: Icon(
-                    _obscureText
-                        ? CupertinoIcons.eye_slash // 如果密碼隱藏，顯示眼睛被遮擋的圖標
-                        : CupertinoIcons.eye, // 如果密碼顯示，顯示普通眼睛圖標
-                    color: CupertinoColors.inactiveGray,
-                  ),
-                )
-              : null, // 不是密碼框則不顯示這個按鈕
+          // suffix: isPassword
+          //     ? CupertinoButton(
+          //         padding: EdgeInsets.zero,
+          //         onPressed: () {
+          //           setState(() {
+          //             _obscureText = !_obscureText; // 切換顯示/隱藏密碼
+          //           });
+          //         },
+          //         child: Icon(
+          //           _obscureText
+          //               ? CupertinoIcons.eye_slash // 如果密碼隱藏，顯示眼睛被遮擋的圖標
+          //               : CupertinoIcons.eye, // 如果密碼顯示，顯示普通眼睛圖標
+          //           color: CupertinoColors.inactiveGray,
+          //         ),
+          //       )
+          //     : null, // 不是密碼框則不顯示這個按鈕
         ),
         if (isDuplicate) // 如果重複編號，提示錯誤
           const Padding(
@@ -410,6 +438,86 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
           ),
 
         // 根據密碼是否一致來顯示錯誤訊息
+        // if (isDifferent)
+        //   const Padding(
+        //     padding: EdgeInsets.only(left: 10, top: 5),
+        //     child: Text(
+        //       'Passwords do not match',
+        //       style: TextStyle(
+        //         color: CupertinoColors.destructiveRed,
+        //         fontSize: 16,
+        //       ),
+        //     ),
+        //   ),
+      ],
+    );
+  }
+
+  // //通用沒有米字號的輸入格
+  // Widget _buildCupertinoTextField({
+  //   required String placeholder,
+  //   required TextEditingController controller,
+  //   EdgeInsetsGeometry padding =
+  //       const EdgeInsets.only(top: 30, bottom: 30, left: 30),
+  //   TextStyle textStyle = const TextStyle(fontSize: 24),
+  // }) {
+  //   return CupertinoTextField(
+  //     placeholder: placeholder,
+  //     controller: controller,
+  //     padding: padding,
+  //     style: textStyle,
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(10), // 圓角邊框
+  //       border: Border.all(
+  //         color: CupertinoColors.lightBackgroundGray, // 邊框顏色
+  //         width: 2, // 邊框寬度
+  //       ),
+  //     ),
+  //   );
+  // }
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String placeholder,
+    // bool isEmpty = false,
+    bool isDifferent = false, // 密碼不一致
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CupertinoTextField(
+          placeholder: placeholder,
+          controller: controller,
+          obscureText: _obscureText, // 密碼隱藏
+          padding: const EdgeInsets.only(top: 30, bottom: 30, left: 10),
+          style: const TextStyle(
+            fontSize: 24,
+            color: CupertinoColors.black,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isDifferent
+                  ? CupertinoColors.destructiveRed // 密碼錯誤顯示紅色邊框
+                  : CupertinoColors.lightBackgroundGray, // 否則顯示灰色邊框
+              width: 2,
+            ),
+          ),
+          suffix: CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: () {
+              setState(() {
+                _obscureText = !_obscureText; // 切換顯示/隱藏密碼
+              });
+            },
+            child: Icon(
+              _obscureText
+                  ? CupertinoIcons.eye_slash // 密碼隱藏
+                  : CupertinoIcons.eye, // 密碼顯示
+              color: CupertinoColors.inactiveGray,
+            ),
+          ),
+        ),
+        // 如果密碼不一致，顯示錯誤訊息
         if (isDifferent)
           const Padding(
             padding: EdgeInsets.only(left: 10, top: 5),
@@ -422,29 +530,6 @@ class EditPersonnelPageState extends State<EditPersonnelPage> {
             ),
           ),
       ],
-    );
-  }
-
-  //通用沒有米字號的輸入格
-  Widget _buildCupertinoTextField({
-    required String placeholder,
-    required TextEditingController controller,
-    EdgeInsetsGeometry padding =
-        const EdgeInsets.only(top: 30, bottom: 30, left: 30),
-    TextStyle textStyle = const TextStyle(fontSize: 24),
-  }) {
-    return CupertinoTextField(
-      placeholder: placeholder,
-      controller: controller,
-      padding: padding,
-      style: textStyle,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10), // 圓角邊框
-        border: Border.all(
-          color: CupertinoColors.lightBackgroundGray, // 邊框顏色
-          width: 2, // 邊框寬度
-        ),
-      ),
     );
   }
 
