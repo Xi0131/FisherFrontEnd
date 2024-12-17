@@ -10,6 +10,9 @@ class CrewPage extends StatefulWidget {
 }
 
 class _CrewPageState extends State<CrewPage> {
+  // 假設這裡有 workerId
+  final int workerId = 10; // 請根據實際情況替換為真實的 workerId
+
   void logout(BuildContext context) {
     Navigator.pop(context);
   }
@@ -19,12 +22,10 @@ class _CrewPageState extends State<CrewPage> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: const Text('船員資訊'),
-        // 添加返回鍵（登出）
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: const Icon(CupertinoIcons.back),
           onPressed: () {
-            // 彈出確認登出對話框
             showCupertinoDialog(
               useRootNavigator: false,
               context: context,
@@ -40,7 +41,6 @@ class _CrewPageState extends State<CrewPage> {
                     isDestructiveAction: true,
                     child: const Text('確定'),
                     onPressed: () {
-                      // 執行登出操作，例如導航到登入頁面
                       Navigator.pop(context); // 關閉對話框
                       Navigator.pop(context); // 返回上一頁
                     },
@@ -51,18 +51,18 @@ class _CrewPageState extends State<CrewPage> {
           },
         ),
       ),
-      child: const SafeArea(
+      child: SafeArea(
         child: Row(
           children: [
-            // 左側：船員資訊
             Expanded(
               flex: 1,
-              child: CrewInfo(),
+              // 傳入 workerId
+              child: CrewInfo(workerId: workerId),
             ),
-            // 右側：月曆
             Expanded(
-              flex: 3, // 增加右側月曆的佔比
-              child: CrewCalendar(),
+              flex: 3,
+              // 傳入 workerId
+              child: CrewCalendar(workerId: workerId),
             ),
           ],
         ),
