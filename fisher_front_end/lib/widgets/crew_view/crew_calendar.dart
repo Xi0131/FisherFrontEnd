@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
-import 'dart:ui' as ui; // 為了使用 ui.Image，需要導入 dart:ui
-import 'signature_pad.dart'; // 確保導入 signature_pad.dart
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'signature_pad.dart';
 
 class CrewCalendar extends StatefulWidget {
-  const CrewCalendar({super.key});
+  final int workerId;
+  const CrewCalendar({super.key, required this.workerId});
 
   @override
   State<CrewCalendar> createState() => _CrewCalendarState();
@@ -12,6 +14,85 @@ class CrewCalendar extends StatefulWidget {
 class _CrewCalendarState extends State<CrewCalendar> {
   int selectedYear = DateTime.now().year;
   int selectedMonth = DateTime.now().month;
+  List<Map<String, dynamic>> monthlyData = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMonthlyData();
+  }
+
+  Future<void> _loadMonthlyData() async {
+    try {
+      final data = await _getMonthlyCalendar(widget.workerId, selectedYear, selectedMonth);
+      setState(() {
+        monthlyData = data;
+      });
+    } catch (e) {
+      setState(() {
+        monthlyData = [];
+      });
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> _getMonthlyCalendar(int workerId, int year, int month) async {
+    final url = 'http://35.229.208.250:3000/api/workerPage/calendar/$workerId/$year/$month';
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      // data 預期為一個陣列，元素格式例如：
+      // {
+      //   "date": "2024-12-10",
+      //   "duration": 23,
+      //   "status": "...",
+      //   "worker_id": 10
+      // }
+
+      // 建立該月份完整日期的初始結構，全部預設 hours = 0
+      int daysInMonth = _getDaysInMonth(year, month);
+      List<Map<String, dynamic>> convertedData = [];
+      for (int i = 1; i <= daysInMonth; i++) {
+        final dateStr = _formatDate(year, month, i);
+        convertedData.add({'date': dateStr, 'hours': 0});
+      }
+
+      if (data is List) {
+        // data 是一個陣列，迭代並將日期與duration放入convertedData中
+        for (var entry in data) {
+          if (entry['date'] != null && entry['duration'] != null) {
+            final dateStr = entry['date'];
+            final hours = entry['duration'];
+            final index = convertedData.indexWhere((d) => d['date'] == dateStr);
+            if (index != -1) {
+              convertedData[index]['hours'] = hours;
+            }
+          }
+        }
+      }
+
+      return convertedData;
+    } else {
+      throw Exception('Failed to load monthly calendar');
+    }
+  }
+
+
+  Future<void> _reportAbnormality(int workerId, String date, String issueDescription) async {
+    final response = await http.post(
+      Uri.parse('http://35.229.208.250:3000/api/workerPage/newReport'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "worker_id": workerId,
+        "date": date,
+        "issue_description": issueDescription
+      }),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw Exception('Failed to report abnormality');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +116,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                       selectedMonth--;
                     }
                   });
+                  _loadMonthlyData();
                 },
               ),
               CupertinoButton(
@@ -65,6 +147,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                       selectedMonth++;
                     }
                   });
+                  _loadMonthlyData();
                 },
               ),
             ],
@@ -81,7 +164,6 @@ class _CrewCalendarState extends State<CrewCalendar> {
             ],
           ),
         ),
-        // 月曆網格
         Expanded(
           child: _buildCalendarGrid(),
         ),
@@ -92,30 +174,23 @@ class _CrewCalendarState extends State<CrewCalendar> {
   Widget _buildCalendarGrid() {
     int daysInMonth = _getDaysInMonth(selectedYear, selectedMonth);
     int firstWeekday = _getFirstWeekdayOfMonth(selectedYear, selectedMonth);
-
-    // 計算需要顯示的總單元格數量
     int totalCells = ((daysInMonth + firstWeekday - 1) / 7).ceil() * 7;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         double gridWidth = constraints.maxWidth;
         double gridHeight = constraints.maxHeight;
-
-        // 減小格子之間的間距
         double cellMargin = 1.0;
-
-        // 計算格子的寬度和高度，確保不會超出可用空間
         double cellWidth = (gridWidth - cellMargin * 2 * 7) / 7;
         int numberOfRows = (totalCells / 7).ceil();
-        double cellHeight =
-            (gridHeight - cellMargin * 2 * numberOfRows) / numberOfRows;
+        double cellHeight = (gridHeight - cellMargin * 2 * numberOfRows) / numberOfRows;
 
         return GridView.builder(
           padding: EdgeInsets.zero,
-          physics: const NeverScrollableScrollPhysics(), // 禁用滾動
+          physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 7, // 一週7天
-            childAspectRatio: cellWidth / cellHeight, // 根據計算結果設定寬高比
+            crossAxisCount: 7,
+            childAspectRatio: cellWidth / cellHeight,
             crossAxisSpacing: cellMargin * 2,
             mainAxisSpacing: cellMargin * 2,
           ),
@@ -123,12 +198,14 @@ class _CrewCalendarState extends State<CrewCalendar> {
           itemBuilder: (context, index) {
             int dayNum = index - firstWeekday + 2;
             if (index < firstWeekday - 1 || dayNum > daysInMonth) {
-              // 空白單元格
-              return Container(
-                margin: EdgeInsets.all(cellMargin),
-              );
+              return Container(margin: EdgeInsets.all(cellMargin));
             } else {
-              // 日期單元格
+              final dateStr = _formatDate(selectedYear, selectedMonth, dayNum);
+              final dayData = monthlyData.firstWhere((d) => d['date'] == dateStr, orElse: () => {});
+              String info = '';
+              if (dayData.isNotEmpty && dayData['hours'] != null && dayData['hours'] > 0) {
+                info = '${dayData['hours']}h';
+              }
               return GestureDetector(
                 onTap: () {
                   _showDayDetail(context, dayNum);
@@ -136,7 +213,13 @@ class _CrewCalendarState extends State<CrewCalendar> {
                 child: Container(
                   margin: EdgeInsets.all(cellMargin),
                   alignment: Alignment.center,
-                  child: Text('$dayNum'),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('$dayNum'),
+                      if (info.isNotEmpty) Text(info, style: const TextStyle(fontSize: 12))
+                    ],
+                  ),
                 ),
               );
             }
@@ -157,7 +240,6 @@ class _CrewCalendarState extends State<CrewCalendar> {
         color: CupertinoColors.systemBackground.resolveFrom(context),
         child: Column(
           children: [
-            // 操作按鈕
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -173,11 +255,11 @@ class _CrewCalendarState extends State<CrewCalendar> {
                       selectedMonth = tempMonth;
                     });
                     Navigator.pop(context);
+                    _loadMonthlyData();
                   },
                 ),
               ],
             ),
-            // 年月選擇器
             Expanded(
               child: Row(
                 children: [
@@ -191,9 +273,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                         tempYear = 2000 + index;
                       },
                       children: List<Widget>.generate(50, (int index) {
-                        return Center(
-                          child: Text('${2000 + index}年'),
-                        );
+                        return Center(child: Text('${2000 + index}年'));
                       }),
                     ),
                   ),
@@ -207,9 +287,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                         tempMonth = index + 1;
                       },
                       children: List<Widget>.generate(12, (int index) {
-                        return Center(
-                          child: Text('${index + 1}月'),
-                        );
+                        return Center(child: Text('${index + 1}月'));
                       }),
                     ),
                   ),
@@ -223,6 +301,12 @@ class _CrewCalendarState extends State<CrewCalendar> {
   }
 
   void _showDayDetail(BuildContext context, int day) {
+    final dateStr = _formatDate(selectedYear, selectedMonth, day);
+    final dayData = monthlyData.firstWhere((d) => d['date'] == dateStr, orElse: () => {});
+    final hoursInfo = (dayData.isNotEmpty && dayData['hours'] != null && dayData['hours'] > 0)
+        ? '${dayData['hours']} 小時'
+        : '無相關資料';
+
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
@@ -230,16 +314,53 @@ class _CrewCalendarState extends State<CrewCalendar> {
         content: Column(
           children: [
             const SizedBox(height: 10),
-            const Text('顯示當天的詳細工作情況（時數）'),
+            Text('當天工作時數：$hoursInfo'),
             const SizedBox(height: 16),
-            // 替換簽名區域為簽名按鈕
             CupertinoButton(
               child: const Text('點擊簽名'),
               onPressed: () {
-                Navigator.pop(context); // 關閉當前對話框
+                Navigator.pop(context);
                 _showSignaturePad(context, day);
               },
             ),
+            const SizedBox(height: 16),
+            CupertinoButton(
+              child: const Text('報告異常'),
+              onPressed: () async {
+                Navigator.pop(context);
+                final issueDescription = '設備故障，無法工作';
+                try {
+                  await _reportAbnormality(widget.workerId, dateStr, issueDescription);
+                  showCupertinoDialog(
+                    context: context,
+                    builder: (context) => CupertinoAlertDialog(
+                      title: const Text('回報成功'),
+                      content: const Text('已成功回報異常。'),
+                      actions: [
+                        CupertinoDialogAction(
+                          child: const Text('確定'),
+                          onPressed: () => Navigator.pop(context),
+                        )
+                      ],
+                    ),
+                  );
+                } catch (e) {
+                  showCupertinoDialog(
+                    context: context,
+                    builder: (context) => CupertinoAlertDialog(
+                      title: const Text('回報失敗'),
+                      content: Text('錯誤: $e'),
+                      actions: [
+                        CupertinoDialogAction(
+                          child: const Text('確定'),
+                          onPressed: () => Navigator.pop(context),
+                        )
+                      ],
+                    ),
+                  );
+                }
+              },
+            )
           ],
         ),
         actions: [
@@ -257,32 +378,15 @@ class _CrewCalendarState extends State<CrewCalendar> {
       context,
       CupertinoPageRoute(
         builder: (context) => SignaturePad(
-          onSignComplete: (ui.Image image) {
-            // 在這裡處理簽名圖片（例如，保存或顯示）
-            // 現在，我們只是顯示一個確認對話框
-            showCupertinoDialog(
-              context: context,
-              builder: (context) => CupertinoAlertDialog(
-                title: const Text('簽名已保存'),
-                content: const Text('您的簽名已成功保存。'),
-                actions: [
-                  CupertinoDialogAction(
-                    child: const Text('確定'),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-            );
-          },
+          date: _formatDate(selectedYear, selectedMonth, day),
+          workerId: widget.workerId,
         ),
       ),
     );
   }
 
   int _getFirstWeekdayOfMonth(int year, int month) {
-    // 在 Dart 中，星期一為 1，星期天為 7
-    int weekday = DateTime(year, month, 1).weekday;
-    return weekday;
+    return DateTime(year, month, 1).weekday;
   }
 
   int _getDaysInMonth(int year, int month) {
@@ -295,19 +399,15 @@ class _CrewCalendarState extends State<CrewCalendar> {
 
   String _getMonthName(int month) {
     const months = [
-      '一月',
-      '二月',
-      '三月',
-      '四月',
-      '五月',
-      '六月',
-      '七月',
-      '八月',
-      '九月',
-      '十月',
-      '十一月',
-      '十二月',
+      '一月', '二月', '三月', '四月', '五月', '六月',
+      '七月', '八月', '九月', '十月', '十一月', '十二月',
     ];
     return months[month - 1];
+  }
+
+  String _formatDate(int year, int month, int day) {
+    final m = month < 10 ? '0$month' : '$month';
+    final d = day < 10 ? '0$day' : '$day';
+    return '$year-$m-$d';
   }
 }
