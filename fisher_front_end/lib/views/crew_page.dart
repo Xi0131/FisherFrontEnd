@@ -21,7 +21,7 @@ class _CrewPageState extends State<CrewPage> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('Crew Info'),
+        middle: const Text('船員資訊'),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: const Icon(CupertinoIcons.back),
@@ -30,19 +30,19 @@ class _CrewPageState extends State<CrewPage> {
               useRootNavigator: false,
               context: context,
               builder: (context) => CupertinoAlertDialog(
-                title: const Text('Log Out'),
-                content: const Text('Are you sure you want to log out?'),
+                title: const Text('登出'),
+                content: const Text('確定要登出嗎？'),
                 actions: [
                   CupertinoDialogAction(
-                    child: const Text('Cancel'),
+                    child: const Text('取消'),
                     onPressed: () => Navigator.pop(context),
                   ),
                   CupertinoDialogAction(
                     isDestructiveAction: true,
-                    child: const Text('Confirm'),
+                    child: const Text('確定'),
                     onPressed: () {
-                      Navigator.pop(context); // Close the dialog
-                      Navigator.pop(context); // Return to the previous page
+                      Navigator.pop(context); // 關閉對話框
+                      Navigator.pop(context); // 返回上一頁
                     },
                   ),
                 ],
@@ -56,12 +56,12 @@ class _CrewPageState extends State<CrewPage> {
           children: [
             Expanded(
               flex: 1,
-              // Pass in workerId
+              // 傳入 workerId
               child: CrewInfo(workerId: workerId),
             ),
             Expanded(
               flex: 3,
-              // Pass in workerId
+              // 傳入 workerId
               child: CrewCalendar(workerId: workerId),
             ),
           ],
