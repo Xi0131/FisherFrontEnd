@@ -1,34 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'dart:convert'; // For JSON decoding
-import 'package:http/http.dart' as http;
 
-class CTNavigatorBar extends StatefulWidget
+class CTNavigatorBar extends StatelessWidget
     implements ObstructingPreferredSizeWidget {
-  final BuildContext context;
-  const CTNavigatorBar({super.key, required this.context});
-
-  @override
-  State<CTNavigatorBar> createState() => _CTNavigatorBarState();
-
-  @override
-  Size get preferredSize => const Size.fromHeight(44.0);
-
-  @override
-  bool shouldFullyObstruct(BuildContext context) {
-    return true;
-  }
-}
-
-class _CTNavigatorBarState extends State<CTNavigatorBar> {
-  bool _hasNotification = false;
-  int notificationCount = 0;
+  final bool hasNotification;
   // State to control the red dot visibility
-
-  void _toggleNotification() {
-    setState(() {
-      _hasNotification = !_hasNotification; // Toggle notification state
-    });
-  }
+  const CTNavigatorBar({super.key, required this.hasNotification});
 
   void _showDialog(BuildContext context) {
     showCupertinoDialog(
@@ -59,38 +35,16 @@ class _CTNavigatorBarState extends State<CTNavigatorBar> {
     );
   }
 
-  // call api to get notification status
-  // should be call when first login to working hour management page
-  // should be call after every save
-  Future<void> _checkNotificationState() async {
-    try {
-      String url =
-          'http://35.229.208.250:3000/api/CTManagementPage/notification-count';
-      // Send the GET request
-      final response = await http.get(Uri.parse(url));
+  @override
+  Size get preferredSize => const Size.fromHeight(44.0);
 
-      // Check if the response status code indicates success
-      if (response.statusCode == 200) {
-        // Decode and handle the JSON response
-        setState(() {
-          notificationCount = jsonDecode(response.body)['notifications'];
-          if (notificationCount > 0) {
-            _hasNotification = true;
-          } else {
-            _hasNotification = false;
-          }
-        });
-      } else {
-        debugPrint('Request failed with status: ${response.statusCode}');
-      }
-    } catch (e) {
-      debugPrint('Error occurred: $e');
-    }
+  @override
+  bool shouldFullyObstruct(BuildContext context) {
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    _checkNotificationState();
     return CupertinoNavigationBar(
         leading: CupertinoButton(
           padding: const EdgeInsets.all(0),
@@ -110,7 +64,7 @@ class _CTNavigatorBarState extends State<CTNavigatorBar> {
                 child: Icon(CupertinoIcons.settings),
               ),
             ),
-            if (_hasNotification) // Show red dot if notification exists
+            if (hasNotification) // Show red dot if notification exists
               Positioned(
                 right: 4, // Adjust position relative to the icon
                 top: 4,

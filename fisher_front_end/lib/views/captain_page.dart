@@ -14,116 +14,27 @@ class CaptainPage extends StatefulWidget {
 }
 
 class _CaptainPageState extends State<CaptainPage> {
+  bool _hasNotification = false;
   DateTime date = DateTime.now();
   List<int> workingHour = List.generate(48, (index) => 0);
   // List of items
-  List<Map<String, dynamic>> workerList = [
-    // {
-    //   "workerID": 1,
-    //   "workerName": "Name 1",
-    //   "workerType": "Type 1",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 2,
-    //   "workerName": "Name 2",
-    //   "workerType": "Type 2",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 3,
-    //   "workerName": "Name 3",
-    //   "workerType": "Type 3",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 4,
-    //   "workerName": "Name 4",
-    //   "workerType": "Type 4",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 5,
-    //   "workerName": "Name 5",
-    //   "workerType": "Type 5",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 6,
-    //   "workerName": "Name 6",
-    //   "workerType": "Type 6",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 7,
-    //   "workerName": "Name 7",
-    //   "workerType": "Type 7",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 8,
-    //   "workerName": "Name 8",
-    //   "workerType": "Type 8",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 9,
-    //   "workerName": "Name 1",
-    //   "workerType": "Type 1",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 10,
-    //   "workerName": "Name 2",
-    //   "workerType": "Type 2",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 11,
-    //   "workerName": "Name 3",
-    //   "workerType": "Type 3",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 12,
-    //   "workerName": "Name 4",
-    //   "workerType": "Type 4",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 13,
-    //   "workerName": "Name 5",
-    //   "workerType": "Type 5",
-    //   "isRecorded": true
-    // },
-    // {
-    //   "workerID": 14,
-    //   "workerName": "Name 6",
-    //   "workerType": "Type 6",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 15,
-    //   "workerName": "Name 7",
-    //   "workerType": "Type 7",
-    //   "isRecorded": false
-    // },
-    // {
-    //   "workerID": 16,
-    //   "workerName": "Name 8",
-    //   "workerType": "Type 8",
-    //   "isRecorded": true
-    // },
-  ];
+  List<Map<String, dynamic>> workerList = [];
+  // {
+  //   "workerID": 1,
+  //   "workerName": "Name 1",
+  //   "workerType": "Type 1",
+  //   "isRecorded": false
+  // },
 
   List<Map<String, dynamic>> workerStatus = [];
   // {
   //   "workerID": 123,
+  //   "workingHour": [],
   //   "isSelected": false,
   //   "isRecorded": false
   // }
 
-  Future<void> sendGetRequest() async {
+  Future<void> getWorkerInfo() async {
     try {
       String url = 'http://35.229.208.250:3000/api/CTManagementPage/employees';
       // Send the GET request
@@ -145,6 +56,7 @@ class _CaptainPageState extends State<CaptainPage> {
           for (final e in data) {
             workerStatus.add({
               'workerID': e['worker_id'],
+              'workingHour': List.generate(48, (index) => 0),
               'isSelected': false,
               'isRecorded': false
             });
@@ -152,36 +64,97 @@ class _CaptainPageState extends State<CaptainPage> {
         });
         debugPrint('Response Data: $data');
       } else {
-        debugPrint('Request failed with status: ${response.statusCode}');
+        debugPrint(
+            'Worker data request failed with status: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Error occurred: $e');
     }
   }
 
-  @override
-  void initState() {
-    sendGetRequest();
-    // setState(() {
-    //   workerList.sort(
-    //     (a, b) {
-    //       if (a['isRecorded'] == true && b['isRecorded'] == true) {
-    //         return 1;
-    //       } else {
-    //         return 0;
-    //       }
-    //     },
-    //   );
-    //   for (final element in workerList) {
-    //     workerStatus.add({
-    //       "workerID": element['workerID'],
-    //       "isSelected": false,
-    //       "isRecorded": element['isRecorded']
-    //     });
-    //   }
-    // });
-    // debugPrint(workerStatus.toString());
-    super.initState();
+  Future<void> getWorkingHourInfo() async {
+    try {
+      String url =
+          'http://35.229.208.250:3000/api/CTManagementPage/work-hours/${date.year}-${date.month}-${date.day}';
+      // Send the GET request
+      final response = await http.get(Uri.parse(url));
+
+      // Check if the response status code indicates success
+      if (response.statusCode == 200) {
+        // Decode and handle the JSON response
+        final data = jsonDecode(response.body);
+        for (final e in data) {
+          for (final worker in workerStatus) {
+            if (e['worker_id'] == worker['workerID']) {
+              setState(() {
+                e['working_hour'] = worker['workingHour'];
+                // debugPrint('${e['working_hour']}');
+              });
+            }
+          }
+        }
+        debugPrint('Response Data: $data');
+      } else {
+        debugPrint(
+            'Worker data request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error occurred: $e');
+    }
+  }
+
+  Future<void> sendData(Map<String, dynamic> data) async {
+    final url = Uri.parse(
+        'http://35.229.208.250:3000/api/CTManagementPage/register-work-hours');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint('Save working hour success: ${response.body}');
+      } else {
+        debugPrint(
+            'Save working hour failed: ${response.statusCode}, ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+    }
+  }
+
+  // call api to get notification status
+  // should be call when first login to working hour management page
+  // should be call after every save
+  Future<void> checkNotificationState() async {
+    try {
+      String url =
+          'http://35.229.208.250:3000/api/CTManagementPage/notification-count';
+      // Send the GET request
+      final response = await http.get(Uri.parse(url));
+
+      // Check if the response status code indicates success
+      if (response.statusCode == 200) {
+        // Decode and handle the JSON response
+        setState(() {
+          int notificationCount = jsonDecode(response.body)['notifications'];
+          if (notificationCount > 0) {
+            _hasNotification = true;
+          } else {
+            _hasNotification = false;
+          }
+        });
+      } else {
+        debugPrint(
+            'NotificationCount request failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Error occurred: $e');
+    }
   }
 
   void onUpdateDate(DateTime newDate) {
@@ -191,34 +164,47 @@ class _CaptainPageState extends State<CaptainPage> {
   }
 
   void onWorkerSelect(int workerID) {
-    setState(() {
-      // i cant think about any better implementation at the moment :(
-      for (Map<String, dynamic> worker in workerStatus) {
-        if (worker['workerID'] == workerID) {
+    // i cant think about any better implementation at the moment :(
+    for (Map<String, dynamic> worker in workerStatus) {
+      if (worker['workerID'] == workerID) {
+        setState(() {
           worker['isSelected'] = !worker['isSelected'];
-          worker['isSelected']
-              ? debugPrint('Worker $workerID is selected')
-              : debugPrint('Worker $workerID is deselected');
-          break;
-        }
+        });
+        worker['isSelected']
+            ? debugPrint('Worker $workerID is selected')
+            : debugPrint('Worker $workerID is deselected');
+        // for (final e in workerStatus) {
+        //   if (e['workerID'] == workerID) {
+        //     debugPrint('${e['workingHour']}');
+        //   }
+        // }
+        break;
+      }
+    }
+  }
+
+  void onSetWorkingHour(List<int> newWorkingHour) {
+    setState(() {
+      for (int i = 0; i < 48; i++) {
+        workingHour[i] = newWorkingHour[i];
       }
     });
   }
 
-  void onSetWorkingHour(List<int> newWorkingHour) {
-    for (int i = 0; i < 48; i++) {
-      workingHour[i] = newWorkingHour[i];
-    }
-  }
-
   void onSaveInfo() {
+    Map<String, dynamic> data = {
+      "workerIDs": [],
+      "updateWorkHours": workingHour,
+      "date": "${date.year}-${date.month}-${date.day}"
+    };
+
     for (Map<String, dynamic> worker in workerStatus) {
       if (worker['isSelected']) {
         for (Map<String, dynamic> e in workerList) {
           if (e['workerID'] == worker['workerID']) {
+            data['workerIDs'].add(e['workerID']);
             setState(() {
               e['isRecorded'] = true;
-              // debugPrint('${e['workerID']}, ${e['isRecorded']}');
             });
             break;
           }
@@ -229,13 +215,27 @@ class _CaptainPageState extends State<CaptainPage> {
         });
       }
     }
+    debugPrint('onSaveInfo:');
+    debugPrint('${data['workerIDs']}');
+    debugPrint('$workingHour');
+
     // send save through api
+    sendData(data);
+    getWorkingHourInfo();
+  }
+
+  @override
+  void initState() {
+    getWorkerInfo();
+    getWorkingHourInfo();
+    checkNotificationState();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: CTNavigatorBar(context: context),
+      navigationBar: CTNavigatorBar(hasNotification: _hasNotification),
       child: SafeArea(
         child: Column(
           children: [

@@ -16,12 +16,6 @@ class WorkingHourPicker extends StatefulWidget {
 class _WorkingHourPickerState extends State<WorkingHourPicker> {
   List<int> state = List.generate(48, (index) => 0);
 
-  @override
-  void initState() {
-    state = widget.timeSelected;
-    super.initState();
-  }
-
   void _toggleTime12(int index) {
     index = index;
     setState(() {
@@ -52,7 +46,23 @@ class _WorkingHourPickerState extends State<WorkingHourPicker> {
   }
 
   @override
+  void initState() {
+    state = widget.timeSelected;
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant WorkingHourPicker oldWidget) {
+    // debugPrint('${widget.timeSelected}');
+    if (state != widget.timeSelected) {
+      state = widget.timeSelected;
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // debugPrint('move');
     return Column(
       children: [
         Row(

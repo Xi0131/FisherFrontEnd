@@ -16,18 +16,6 @@ class _CtNotificationPageState extends State<CtNotificationPage> {
     //   "title": "New Message",
     //   "message": "You have received a new message.",
     // },
-    // {
-    //   "title": "Task Reminder",
-    //   "message": "Don't forget to complete your task.",
-    // },
-    // {
-    //   "title": "Update Available",
-    //   "message": "A new update is ready to install.",
-    // },
-    // {
-    //   "title": "Meeting Scheduled",
-    //   "message": "Your meeting is scheduled for tomorrow.",
-    // },
   ];
 
   Future<void> callDeleteNotification(int index) async {
