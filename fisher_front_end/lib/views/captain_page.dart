@@ -34,7 +34,7 @@ class _CaptainPageState extends State<CaptainPage> {
   //   "isRecorded": false
   // }
 
-  Future<void> getWorkerInfo() async {
+  Future<void> _getWorkerInfo() async {
     try {
       String url = 'http://35.229.208.250:3000/api/CTManagementPage/employees';
       // Send the GET request
@@ -71,7 +71,7 @@ class _CaptainPageState extends State<CaptainPage> {
     }
   }
 
-  Future<void> getWorkingHourInfo() async {
+  Future<void> _getWorkingHourInfo() async {
     try {
       String url =
           'http://35.229.208.250:3000/api/CTManagementPage/work-hours/${date.year}-${date.month}-${date.day}';
@@ -102,7 +102,7 @@ class _CaptainPageState extends State<CaptainPage> {
     }
   }
 
-  Future<void> sendData(Map<String, dynamic> data) async {
+  Future<void> _sendData(Map<String, dynamic> data) async {
     final url = Uri.parse(
         'http://35.229.208.250:3000/api/CTManagementPage/register-work-hours');
 
@@ -129,7 +129,7 @@ class _CaptainPageState extends State<CaptainPage> {
   // call api to get notification status
   // should be call when first login to working hour management page
   // should be call after every save
-  Future<void> checkNotificationState() async {
+  Future<void> _checkNotificationState() async {
     try {
       String url =
           'http://35.229.208.250:3000/api/CTManagementPage/notification-count';
@@ -156,13 +156,13 @@ class _CaptainPageState extends State<CaptainPage> {
     }
   }
 
-  void onUpdateDate(DateTime newDate) {
+  void _onUpdateDate(DateTime newDate) {
     setState(
       () => date = newDate,
     );
   }
 
-  void onWorkerSelect(int workerID) {
+  void _onWorkerSelect(int workerID) {
     // i cant think about any better implementation at the moment :(
     for (Map<String, dynamic> worker in workerStatus) {
       if (worker['workerID'] == workerID) {
@@ -185,7 +185,7 @@ class _CaptainPageState extends State<CaptainPage> {
     }
   }
 
-  void onSetWorkingHour(List<int> newWorkingHour) {
+  void _onSetWorkingHour(List<int> newWorkingHour) {
     setState(() {
       for (int i = 0; i < 48; i++) {
         workingHour[i] = newWorkingHour[i];
@@ -193,7 +193,7 @@ class _CaptainPageState extends State<CaptainPage> {
     });
   }
 
-  void onSaveInfo() {
+  void _onSaveInfo() {
     // template of data
     Map<String, dynamic> data = {
       "workerIDs": [],
@@ -223,17 +223,17 @@ class _CaptainPageState extends State<CaptainPage> {
     debugPrint('$workingHour');
 
     // send save through api, get updated state, and clear workingHour
-    sendData(data);
-    getWorkingHourInfo();
-    checkNotificationState();
+    _sendData(data);
+    _getWorkingHourInfo();
+    _checkNotificationState();
     workingHour = List.generate(48, (index) => 0);
   }
 
   @override
   void initState() {
-    getWorkerInfo();
-    getWorkingHourInfo();
-    checkNotificationState();
+    _getWorkerInfo();
+    _getWorkingHourInfo();
+    _checkNotificationState();
     super.initState();
   }
 
@@ -245,7 +245,7 @@ class _CaptainPageState extends State<CaptainPage> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            DatePicker(date: date, onUpdateDate: onUpdateDate),
+            DatePicker(date: date, onUpdateDate: _onUpdateDate),
             // show workers
             const SizedBox(height: 10),
             SizedBox(
@@ -268,19 +268,19 @@ class _CaptainPageState extends State<CaptainPage> {
                       workerName: workerList[index]['workerName'],
                       workerType: workerList[index]['workerType'],
                       isRecorded: workerList[index]['isRecorded'],
-                      onWorkerSelect: onWorkerSelect,
+                      onWorkerSelect: _onWorkerSelect,
                     ),
                   )),
             ),
             const SizedBox(height: 10),
             WorkingHourPicker(
               timeSelected: workingHour,
-              onSetWorkingHour: onSetWorkingHour,
+              onSetWorkingHour: _onSetWorkingHour,
             ),
             const SizedBox(height: 30),
             CupertinoButton(
               color: CupertinoColors.systemGrey6,
-              onPressed: onSaveInfo,
+              onPressed: _onSaveInfo,
               child: const SizedBox(
                 height: 40,
                 width: 100,
