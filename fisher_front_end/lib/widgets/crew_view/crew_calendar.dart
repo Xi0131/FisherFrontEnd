@@ -41,6 +41,15 @@ class _CrewCalendarState extends State<CrewCalendar> {
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
+      // data 預期為一個陣列，元素格式例如：
+      // {
+      //   "date": "2024-12-10",
+      //   "duration": 23,
+      //   "status": "...",
+      //   "worker_id": 10
+      // }
+
+      // 建立該月份完整日期的初始結構，全部預設 hours = 0
       int daysInMonth = _getDaysInMonth(year, month);
       List<Map<String, dynamic>> convertedData = [];
       for (int i = 1; i <= daysInMonth; i++) {
@@ -49,6 +58,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
       }
 
       if (data is List) {
+        // data 是一個陣列，迭代並將日期與duration放入convertedData中
         for (var entry in data) {
           if (entry['date'] != null && entry['duration'] != null) {
             final dateStr = entry['date'];
@@ -66,6 +76,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
       throw Exception('Failed to load monthly calendar');
     }
   }
+
 
   Future<void> _reportAbnormality(int workerId, String date, String issueDescription) async {
     final response = await http.post(
@@ -87,7 +98,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Month selector
+        // 月份選擇器
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -112,7 +123,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                 child: Row(
                   children: [
                     Text(
-                      '$selectedYear ${_getMonthName(selectedMonth)}',
+                      '$selectedYear年 ${_getMonthName(selectedMonth)}',
                       style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -142,19 +153,14 @@ class _CrewCalendarState extends State<CrewCalendar> {
             ],
           ),
         ),
-        // Weekday header
+        // 星期標題
         Container(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
-              Text('Mon', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('Tue', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('Wed', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('Thu', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('Fri', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('Sat', style: TextStyle(fontWeight: FontWeight.bold)),
-              Text('Sun', style: TextStyle(fontWeight: FontWeight.bold)),
+            children: [
+              for (var e in ['一', '二', '三', '四', '五', '六', '日'])
+                Text(e, style: const TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -238,11 +244,11 @@ class _CrewCalendarState extends State<CrewCalendar> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CupertinoButton(
-                  child: const Text('Cancel'),
+                  child: const Text('取消'),
                   onPressed: () => Navigator.pop(context),
                 ),
                 CupertinoButton(
-                  child: const Text('OK'),
+                  child: const Text('確定'),
                   onPressed: () {
                     setState(() {
                       selectedYear = tempYear;
@@ -267,7 +273,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                         tempYear = 2000 + index;
                       },
                       children: List<Widget>.generate(50, (int index) {
-                        return Center(child: Text('${2000 + index}'));
+                        return Center(child: Text('${2000 + index}年'));
                       }),
                     ),
                   ),
@@ -281,7 +287,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                         tempMonth = index + 1;
                       },
                       children: List<Widget>.generate(12, (int index) {
-                        return Center(child: Text('${_getMonthName(index + 1)}'));
+                        return Center(child: Text('${index + 1}月'));
                       }),
                     ),
                   ),
@@ -298,20 +304,20 @@ class _CrewCalendarState extends State<CrewCalendar> {
     final dateStr = _formatDate(selectedYear, selectedMonth, day);
     final dayData = monthlyData.firstWhere((d) => d['date'] == dateStr, orElse: () => {});
     final hoursInfo = (dayData.isNotEmpty && dayData['hours'] != null && dayData['hours'] > 0)
-        ? '${dayData['hours']} hours'
-        : 'No data available';
+        ? '${dayData['hours']} 小時'
+        : '無相關資料';
 
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: Text('$selectedYear-$selectedMonth-$day'),
+        title: Text('$selectedYear年$selectedMonth月$day日'),
         content: Column(
           children: [
             const SizedBox(height: 10),
-            Text('Working hours for the day: $hoursInfo'),
+            Text('當天工作時數：$hoursInfo'),
             const SizedBox(height: 16),
             CupertinoButton(
-              child: const Text('Sign Now'),
+              child: const Text('點擊簽名'),
               onPressed: () {
                 Navigator.pop(context);
                 _showSignaturePad(context, day);
@@ -319,20 +325,20 @@ class _CrewCalendarState extends State<CrewCalendar> {
             ),
             const SizedBox(height: 16),
             CupertinoButton(
-              child: const Text('Report Hours Error'),
+              child: const Text('報告異常'),
               onPressed: () async {
                 Navigator.pop(context);
-                final issueDescription = 'Incorrect hours recorded.';
+                final issueDescription = '設備故障，無法工作';
                 try {
                   await _reportAbnormality(widget.workerId, dateStr, issueDescription);
                   showCupertinoDialog(
                     context: context,
                     builder: (context) => CupertinoAlertDialog(
-                      title: const Text('Report Success'),
-                      content: const Text('The hours error was successfully reported.'),
+                      title: const Text('回報成功'),
+                      content: const Text('已成功回報異常。'),
                       actions: [
                         CupertinoDialogAction(
-                          child: const Text('OK'),
+                          child: const Text('確定'),
                           onPressed: () => Navigator.pop(context),
                         )
                       ],
@@ -342,11 +348,11 @@ class _CrewCalendarState extends State<CrewCalendar> {
                   showCupertinoDialog(
                     context: context,
                     builder: (context) => CupertinoAlertDialog(
-                      title: const Text('Report Failed'),
-                      content: Text('Error: $e'),
+                      title: const Text('回報失敗'),
+                      content: Text('錯誤: $e'),
                       actions: [
                         CupertinoDialogAction(
-                          child: const Text('OK'),
+                          child: const Text('確定'),
                           onPressed: () => Navigator.pop(context),
                         )
                       ],
@@ -359,7 +365,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
         ),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Cancel'),
+            child: const Text('取消'),
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -393,8 +399,8 @@ class _CrewCalendarState extends State<CrewCalendar> {
 
   String _getMonthName(int month) {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
+      '一月', '二月', '三月', '四月', '五月', '六月',
+      '七月', '八月', '九月', '十月', '十一月', '十二月',
     ];
     return months[month - 1];
   }

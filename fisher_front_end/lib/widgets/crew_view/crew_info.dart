@@ -40,15 +40,17 @@ class _CrewInfoState extends State<CrewInfo> {
   }
 
   Future<Map<String, dynamic>> _getWorkerInfo(int workerId) async {
+    // 將 :worker_id 替換成實際的 workerId
     final url = Uri.parse('http://35.229.208.250:3000/api/workerEdit/$workerId');
 
-    print('Request URL: $url');
+    print('Request URL: $url'); // 輸出請求的 URL 進行確認
     final response = await http.get(url);
 
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
+      // 確保 API 返回的是單一物件
       return jsonDecode(response.body) as Map<String, dynamic>;
     } else {
       throw Exception('Failed to load worker info');
@@ -83,27 +85,27 @@ class _CrewInfoState extends State<CrewInfo> {
             ),
             const SizedBox(height: 12),
             Text(
-              _workerInfo?['name'] ?? 'Unknown Name',
+              _workerInfo?['name'] ?? '未知姓名',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
             Text(
-              'ID: ${_workerInfo?['worker_id'] ?? 'N/A'}',
+              '編號: ${_workerInfo?['worker_id'] ?? 'N/A'}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 6),
             Text(
-              'Country: ${_workerInfo?['country'] ?? 'N/A'}',
+              '國籍: ${_workerInfo?['country'] ?? 'N/A'}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 6),
             Text(
-              'Passport Number: ${_workerInfo?['passport_number'] ?? 'N/A'}',
+              '護照號碼: ${_workerInfo?['passport_number'] ?? 'N/A'}',
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 6),
             Text(
-              'Job Title: ${_workerInfo?['job_title'] ?? 'N/A'}',
+              '工種: ${_workerInfo?['job_title'] ?? 'N/A'}',
               style: const TextStyle(fontSize: 18),
             ),
           ],
