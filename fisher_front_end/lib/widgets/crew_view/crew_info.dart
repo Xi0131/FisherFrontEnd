@@ -32,7 +32,7 @@ class _CrewInfoState extends State<CrewInfo> {
         });
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
       setState(() {
         _workerInfo = {};
       });
@@ -41,13 +41,14 @@ class _CrewInfoState extends State<CrewInfo> {
 
   Future<Map<String, dynamic>> _getWorkerInfo(int workerId) async {
     // 將 :worker_id 替換成實際的 workerId
-    final url = Uri.parse('http://35.229.208.250:3000/api/workerEdit/$workerId');
+    final url =
+        Uri.parse('http://35.229.208.250:3000/api/workerEdit/$workerId');
 
-    print('Request URL: $url'); // 輸出請求的 URL 進行確認
+    debugPrint('Request URL: $url'); // 輸出請求的 URL 進行確認
     final response = await http.get(url);
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    debugPrint('Response status: ${response.statusCode}');
+    debugPrint('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       // 確保 API 返回的是單一物件
