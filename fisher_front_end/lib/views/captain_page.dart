@@ -57,8 +57,7 @@ class _CaptainPageState extends State<CaptainPage> {
             workerStatus.add({
               'workerID': e['worker_id'],
               'workingHour': List.generate(48, (index) => 0),
-              'isSelected': false,
-              'isRecorded': false
+              'isSelected': false
             });
           }
         });
@@ -84,11 +83,11 @@ class _CaptainPageState extends State<CaptainPage> {
         // Decode and handle the JSON response
         final data = jsonDecode(response.body);
         for (final e in data) {
-          for (final worker in workerStatus) {
-            if (e['worker_id'] == worker['workerID']) {
+          for (int i = 0; i < workerStatus.length; i++) {
+            if (e['worker_id'] == workerStatus[i]['workerID']) {
               setState(() {
-                e['working_hour'] = worker['workingHour'];
-                // debugPrint('${e['working_hour']}');
+                workerStatus[i]['workingHour'] = e['working_hour'];
+                workerList[i]['isRecorded'] = true;
               });
             }
           }
@@ -169,15 +168,18 @@ class _CaptainPageState extends State<CaptainPage> {
       if (worker['workerID'] == workerID) {
         setState(() {
           worker['isSelected'] = !worker['isSelected'];
+
+          // Show selected worker's registered working hour
+          // Or else clear the workingHourPicker
+          if (worker['isSelected']) {
+            workingHour = List<int>.from(worker['workingHour']);
+          } else {
+            workingHour = List.generate(48, (index) => 0);
+          }
         });
         worker['isSelected']
             ? debugPrint('Worker $workerID is selected')
             : debugPrint('Worker $workerID is deselected');
-        // for (final e in workerStatus) {
-        //   if (e['workerID'] == workerID) {
-        //     debugPrint('${e['workingHour']}');
-        //   }
-        // }
         break;
       }
     }
@@ -192,12 +194,14 @@ class _CaptainPageState extends State<CaptainPage> {
   }
 
   void onSaveInfo() {
+    // template of data
     Map<String, dynamic> data = {
       "workerIDs": [],
       "updateWorkHours": workingHour,
       "date": "${date.year}-${date.month}-${date.day}"
     };
 
+    // setting data
     for (Map<String, dynamic> worker in workerStatus) {
       if (worker['isSelected']) {
         for (Map<String, dynamic> e in workerList) {
@@ -211,7 +215,6 @@ class _CaptainPageState extends State<CaptainPage> {
         }
         setState(() {
           worker['isSelected'] = false;
-          worker['isRecorded'] = true;
         });
       }
     }
@@ -219,9 +222,11 @@ class _CaptainPageState extends State<CaptainPage> {
     debugPrint('${data['workerIDs']}');
     debugPrint('$workingHour');
 
-    // send save through api
+    // send save through api, get updated state, and clear workingHour
     sendData(data);
     getWorkingHourInfo();
+    checkNotificationState();
+    workingHour = List.generate(48, (index) => 0);
   }
 
   @override
