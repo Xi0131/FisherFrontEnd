@@ -77,6 +77,7 @@ class _CaptainPageState extends State<CaptainPage> {
           'http://35.229.208.250:3000/api/CTManagementPage/work-hours/${date.year}-${date.month}-${date.day}';
       // Send the GET request
       final response = await http.get(Uri.parse(url));
+      debugPrint('work-hours/${date.year}-${date.month}-${date.day}');
 
       // Check if the response status code indicates success
       if (response.statusCode == 200) {
@@ -157,9 +158,16 @@ class _CaptainPageState extends State<CaptainPage> {
   }
 
   void _onUpdateDate(DateTime newDate) {
-    setState(
-      () => date = newDate,
-    );
+    setState(() {
+      date = newDate;
+      workingHour = List.generate(48, (index) => 0);
+    });
+    setState(() {
+      workerList = [];
+      workerStatus = [];
+    });
+    _getWorkerInfo();
+    _getWorkingHourInfo();
   }
 
   void _onWorkerSelect(int workerID) {
