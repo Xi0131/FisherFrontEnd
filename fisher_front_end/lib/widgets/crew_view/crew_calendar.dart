@@ -24,8 +24,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
 
   Future<void> _loadMonthlyData() async {
     try {
-      final data = await _getMonthlyCalendar(
-          widget.workerId, selectedYear, selectedMonth);
+      final data = await _getMonthlyCalendar(widget.workerId, selectedYear, selectedMonth);
       setState(() {
         monthlyData = data;
       });
@@ -36,23 +35,12 @@ class _CrewCalendarState extends State<CrewCalendar> {
     }
   }
 
-  Future<List<Map<String, dynamic>>> _getMonthlyCalendar(
-      int workerId, int year, int month) async {
-    final url =
-        'http://35.229.208.250:3000/api/workerPage/calendar/$workerId/$year/$month';
+  Future<List<Map<String, dynamic>>> _getMonthlyCalendar(int workerId, int year, int month) async {
+    final url = 'http://35.229.208.250:3000/api/workerPage/calendar/$workerId/$year/$month';
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
-      // data 預期為一個陣列，元素格式例如：
-      // {
-      //   "date": "2024-12-10",
-      //   "duration": 23,
-      //   "status": "...",
-      //   "worker_id": 10
-      // }
-
-      // 建立該月份完整日期的初始結構，全部預設 hours = 0
       int daysInMonth = _getDaysInMonth(year, month);
       List<Map<String, dynamic>> convertedData = [];
       for (int i = 1; i <= daysInMonth; i++) {
@@ -61,7 +49,6 @@ class _CrewCalendarState extends State<CrewCalendar> {
       }
 
       if (data is List) {
-        // data 是一個陣列，迭代並將日期與duration放入convertedData中
         for (var entry in data) {
           if (entry['date'] != null && entry['duration'] != null) {
             final dateStr = entry['date'];
@@ -80,8 +67,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
     }
   }
 
-  Future<void> _reportAbnormality(
-      int workerId, String date, String issueDescription) async {
+  Future<void> _reportAbnormality(int workerId, String date, String issueDescription) async {
     final response = await http.post(
       Uri.parse('http://35.229.208.250:3000/api/workerPage/newReport'),
       headers: {'Content-Type': 'application/json'},
@@ -101,7 +87,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // 月份選擇器
+        // Month selector
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -126,7 +112,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                 child: Row(
                   children: [
                     Text(
-                      '$selectedYear年 ${_getMonthName(selectedMonth)}',
+                      '$selectedYear ${_getMonthName(selectedMonth)}',
                       style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -156,14 +142,19 @@ class _CrewCalendarState extends State<CrewCalendar> {
             ],
           ),
         ),
-        // 星期標題
+        // Weekday header
         Container(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              for (var e in ['一', '二', '三', '四', '五', '六', '日'])
-                Text(e, style: const TextStyle(fontWeight: FontWeight.bold)),
+            children: const [
+              Text('Mon', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Tue', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Wed', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Thu', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Fri', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Sat', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('Sun', style: TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -186,8 +177,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
         double cellMargin = 1.0;
         double cellWidth = (gridWidth - cellMargin * 2 * 7) / 7;
         int numberOfRows = (totalCells / 7).ceil();
-        double cellHeight =
-            (gridHeight - cellMargin * 2 * numberOfRows) / numberOfRows;
+        double cellHeight = (gridHeight - cellMargin * 2 * numberOfRows) / numberOfRows;
 
         return GridView.builder(
           padding: EdgeInsets.zero,
@@ -205,12 +195,9 @@ class _CrewCalendarState extends State<CrewCalendar> {
               return Container(margin: EdgeInsets.all(cellMargin));
             } else {
               final dateStr = _formatDate(selectedYear, selectedMonth, dayNum);
-              final dayData = monthlyData
-                  .firstWhere((d) => d['date'] == dateStr, orElse: () => {});
+              final dayData = monthlyData.firstWhere((d) => d['date'] == dateStr, orElse: () => {});
               String info = '';
-              if (dayData.isNotEmpty &&
-                  dayData['hours'] != null &&
-                  dayData['hours'] > 0) {
+              if (dayData.isNotEmpty && dayData['hours'] != null && dayData['hours'] > 0) {
                 info = '${dayData['hours']}h';
               }
               return GestureDetector(
@@ -224,8 +211,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text('$dayNum'),
-                      if (info.isNotEmpty)
-                        Text(info, style: const TextStyle(fontSize: 12))
+                      if (info.isNotEmpty) Text(info, style: const TextStyle(fontSize: 12))
                     ],
                   ),
                 ),
@@ -252,11 +238,11 @@ class _CrewCalendarState extends State<CrewCalendar> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CupertinoButton(
-                  child: const Text('取消'),
+                  child: const Text('Cancel'),
                   onPressed: () => Navigator.pop(context),
                 ),
                 CupertinoButton(
-                  child: const Text('確定'),
+                  child: const Text('OK'),
                   onPressed: () {
                     setState(() {
                       selectedYear = tempYear;
@@ -281,7 +267,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                         tempYear = 2000 + index;
                       },
                       children: List<Widget>.generate(50, (int index) {
-                        return Center(child: Text('${2000 + index}年'));
+                        return Center(child: Text('${2000 + index}'));
                       }),
                     ),
                   ),
@@ -295,7 +281,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
                         tempMonth = index + 1;
                       },
                       children: List<Widget>.generate(12, (int index) {
-                        return Center(child: Text('${index + 1}月'));
+                        return Center(child: Text('${_getMonthName(index + 1)}'));
                       }),
                     ),
                   ),
@@ -310,24 +296,22 @@ class _CrewCalendarState extends State<CrewCalendar> {
 
   void _showDayDetail(BuildContext context, int day) {
     final dateStr = _formatDate(selectedYear, selectedMonth, day);
-    final dayData =
-        monthlyData.firstWhere((d) => d['date'] == dateStr, orElse: () => {});
-    final hoursInfo =
-        (dayData.isNotEmpty && dayData['hours'] != null && dayData['hours'] > 0)
-            ? '${dayData['hours']} 小時'
-            : '無相關資料';
+    final dayData = monthlyData.firstWhere((d) => d['date'] == dateStr, orElse: () => {});
+    final hoursInfo = (dayData.isNotEmpty && dayData['hours'] != null && dayData['hours'] > 0)
+        ? '${dayData['hours']} hours'
+        : 'No data available';
 
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: Text('$selectedYear年$selectedMonth月$day日'),
+        title: Text('$selectedYear-$selectedMonth-$day'),
         content: Column(
           children: [
             const SizedBox(height: 10),
-            Text('當天工作時數：$hoursInfo'),
+            Text('Working hours for the day: $hoursInfo'),
             const SizedBox(height: 16),
             CupertinoButton(
-              child: const Text('點擊簽名'),
+              child: const Text('Sign Now'),
               onPressed: () {
                 Navigator.pop(context);
                 _showSignaturePad(context, day);
@@ -335,21 +319,20 @@ class _CrewCalendarState extends State<CrewCalendar> {
             ),
             const SizedBox(height: 16),
             CupertinoButton(
-              child: const Text('報告異常'),
+              child: const Text('Report Hours Error'),
               onPressed: () async {
                 Navigator.pop(context);
-                const issueDescription = '設備故障，無法工作';
+                final issueDescription = 'Incorrect hours recorded.';
                 try {
-                  await _reportAbnormality(
-                      widget.workerId, dateStr, issueDescription);
+                  await _reportAbnormality(widget.workerId, dateStr, issueDescription);
                   showCupertinoDialog(
                     context: context,
                     builder: (context) => CupertinoAlertDialog(
-                      title: const Text('回報成功'),
-                      content: const Text('已成功回報異常。'),
+                      title: const Text('Report Success'),
+                      content: const Text('The hours error was successfully reported.'),
                       actions: [
                         CupertinoDialogAction(
-                          child: const Text('確定'),
+                          child: const Text('OK'),
                           onPressed: () => Navigator.pop(context),
                         )
                       ],
@@ -359,11 +342,11 @@ class _CrewCalendarState extends State<CrewCalendar> {
                   showCupertinoDialog(
                     context: context,
                     builder: (context) => CupertinoAlertDialog(
-                      title: const Text('回報失敗'),
-                      content: Text('錯誤: $e'),
+                      title: const Text('Report Failed'),
+                      content: Text('Error: $e'),
                       actions: [
                         CupertinoDialogAction(
-                          child: const Text('確定'),
+                          child: const Text('OK'),
                           onPressed: () => Navigator.pop(context),
                         )
                       ],
@@ -376,7 +359,7 @@ class _CrewCalendarState extends State<CrewCalendar> {
         ),
         actions: [
           CupertinoDialogAction(
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(context),
           ),
         ],
@@ -410,18 +393,8 @@ class _CrewCalendarState extends State<CrewCalendar> {
 
   String _getMonthName(int month) {
     const months = [
-      '一月',
-      '二月',
-      '三月',
-      '四月',
-      '五月',
-      '六月',
-      '七月',
-      '八月',
-      '九月',
-      '十月',
-      '十一月',
-      '十二月',
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December',
     ];
     return months[month - 1];
   }
