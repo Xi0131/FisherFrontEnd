@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui;
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart'; // 新增這行
+import 'package:http_parser/http_parser.dart'; // Added this line
 import 'signature_painter.dart';
 
 class SignaturePad extends StatefulWidget {
@@ -43,7 +43,7 @@ class _SignaturePadState extends State<SignaturePad> {
     final response = await http.Response.fromStream(streamedResponse);
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to sign to check');
+      throw Exception('Failed to submit signature');
     }
   }
 
@@ -70,61 +70,61 @@ class _SignaturePadState extends State<SignaturePad> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('簽名'),
+        middle: const Text('Signature'),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _strokes.isNotEmpty && !_isSubmitting
               ? () async {
-            setState(() {
-              _isSubmitting = true;
-            });
-            try {
-              final img = await _renderSignatureToImage();
-              await _signToCheck(widget.workerId, widget.date, img);
-              setState(() {
-                _isSubmitting = false;
-              });
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              }
-              showCupertinoDialog(
-                context: context,
-                builder: (context) => CupertinoAlertDialog(
-                  title: const Text('簽名已保存'),
-                  content: const Text('您的簽名已成功上傳。'),
-                  actions: [
-                    CupertinoDialogAction(
-                      child: const Text('確定'),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-              );
-            } catch (e) {
-              setState(() {
-                _isSubmitting = false;
-              });
-              showCupertinoDialog(
-                context: context,
-                builder: (context) => CupertinoAlertDialog(
-                  title: const Text('錯誤'),
-                  content: Text('上傳簽名時發生錯誤：$e'),
-                  actions: [
-                    CupertinoDialogAction(
-                      child: const Text('確定'),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-              );
-            }
-          }
+                  setState(() {
+                    _isSubmitting = true;
+                  });
+                  try {
+                    final img = await _renderSignatureToImage();
+                    await _signToCheck(widget.workerId, widget.date, img);
+                    setState(() {
+                      _isSubmitting = false;
+                    });
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                    showCupertinoDialog(
+                      context: context,
+                      builder: (context) => CupertinoAlertDialog(
+                        title: const Text('Signature Saved'),
+                        content: const Text('Your signature has been uploaded successfully.'),
+                        actions: [
+                          CupertinoDialogAction(
+                            child: const Text('OK'),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    );
+                  } catch (e) {
+                    setState(() {
+                      _isSubmitting = false;
+                    });
+                    showCupertinoDialog(
+                      context: context,
+                      builder: (context) => CupertinoAlertDialog(
+                        title: const Text('Error'),
+                        content: Text('An error occurred while uploading the signature: $e'),
+                        actions: [
+                          CupertinoDialogAction(
+                            child: const Text('OK'),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                }
               : null,
-          child: _isSubmitting ? const CupertinoActivityIndicator() : const Text('確認'),
+          child: _isSubmitting ? const CupertinoActivityIndicator() : const Text('Submit'),
         ),
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
-          child: const Text('取消'),
+          child: const Text('Cancel'),
           onPressed: () {
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
@@ -176,7 +176,7 @@ class _SignaturePadState extends State<SignaturePad> {
                     color: CupertinoColors.white.withOpacity(0.7),
                     child: CupertinoButton(
                       color: CupertinoColors.systemGrey4,
-                      child: const Text('清除'),
+                      child: const Text('Clear'),
                       onPressed: () {
                         setState(() {
                           _strokes.clear();
